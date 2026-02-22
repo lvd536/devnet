@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { browserRoutes } from "@/consts/browserRoutes";
 
 export default function ProtectedLayout({
     children,
@@ -17,7 +18,7 @@ export default function ProtectedLayout({
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (!user) {
-                router.replace("/login");
+                router.replace(browserRoutes.auth.login.link);
                 window.cookieStore.delete("uid");
             } else {
                 setAuthorized(true);

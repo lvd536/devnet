@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { browserRoutes } from "@/consts/browserRoutes";
+import NavBar from "@/components/NavBar";
 
 export default function AuthLayout({
     children,
@@ -28,5 +29,12 @@ export default function AuthLayout({
 
     if (loading) return <div>Loading...</div>;
 
-    return <>{children}</>;
+    return (
+        <>
+            <NavBar />
+            <main className="w-full lg:w-[700px] bg-white/20 h-full">
+                {children}
+            </main>
+        </>
+    );
 }

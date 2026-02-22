@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --color-text: #0f1419;
+    --color-text-secondary: #536471;
+    --color-text-muted: #8899a6;
+    --color-background: #fff;
+    --color-card: #ffffff;
+    --color-border: #e1e8ed;
+    --color-border-light: #ebeef0;
+    --color-border-secondary: #ebeef0;
+    --color-item-bg: #f7f9fa;
+    --backdrop-background: rgba(255, 255, 255, 0.85);
+    --gradient-fade: #f7f9fa;
+    --color-input-bg: #eff3f4;
+    --color-tabs-bg: rgba(255, 255, 255, 0.8);
+    --color-mobile-nav-glow: #ffffff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+    --color-text: #e4e6e8;
+    --color-text-secondary: #8a8f96;
+    --color-text-muted: #6a6f76;
+    --color-background: #101214;
+    --color-card: #181a1d;
+    --color-border: rgb(45 48 52 / 100%);
+    --color-border-light: rgb(45 48 52 / 80%);
+    --color-border-secondary: rgb(45 48 52 / 60%);
+    --color-item-bg: rgb(24 26 29 / 100%);
+    --backdrop-background: rgba(16, 18, 20, 0.92);
+    --gradient-fade: #101214;
+    --color-input-bg: #1e2023;
+    --color-tabs-bg: rgba(16, 18, 20, 0.88);
+    --color-mobile-nav-glow: #252729;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+    --color-text: var(--color-text);
+    --color-text-secondary: var(--color-text-secondary);
+    --color-text-muted: var(--color-text-muted);
+    --color-background: var(--color-background);
+    --color-card: var(--color-card);
+    --color-item-bg: var(--color-item-bg);
+    --color-input-bg: var(--color-input-bg);
+    --color-tabs-bg: var(--color-tabs-bg);
+    --color-mobile-nav-glow: var(--color-mobile-nav-glow);
+    --color-border: var(--color-border);
+    --color-border-light: var(--color-border-light);
+    --color-border-secondary: var(--color-border-secondary);
+    --color-backdrop-background: var(--backdrop-background);
+    --color-gradient-fade: var(--gradient-fade);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
 }

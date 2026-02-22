@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { browserRoutes } from "@/consts/browserRoutes";
+import NavBar from "@/components/NavBar";
 
 export default function ProtectedLayout({
     children,
@@ -34,5 +35,12 @@ export default function ProtectedLayout({
 
     if (!authorized) return null;
 
-    return <>{children}</>;
+    return (
+        <>
+            <NavBar />
+            <main className="w-full lg:w-[700px] bg-white/20 h-full">
+                {children}
+            </main>
+        </>
+    );
 }

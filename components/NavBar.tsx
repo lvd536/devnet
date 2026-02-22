@@ -1,37 +1,43 @@
 "use client";
 
+import { NAV_ITEMS } from "@/consts/navItems";
 import { useState } from "react";
 
 export default function NavBar() {
     const [currentPage, setCurrentPage] = useState<number>(0);
 
-    const leftPosition = currentPage * 20;
-    const topPosition = currentPage * 20 + 10;
+    const leftPosition = currentPage * 25;
+    const topPosition = currentPage * 25 + 12;
 
     return (
-        <nav className="flex items-center justify-center max-lg:fixed max-lg:inset-x-0 max-lg:mx-auto bottom-4 left-0 w-[calc(100vw-16px)] h-[68px] lg:h-[350px] lg:w-[74px] bg-white/5 rounded-full">
+        <nav className="flex items-center justify-center max-lg:fixed max-lg:inset-x-0 max-lg:mx-auto bg-background bottom-4 left-0 w-[calc(100vw-16px)] h-[68px] lg:h-[350px] lg:w-[74px] rounded-full ring ring-border">
             <div className="flex relative items-center justify-center w-full h-full mx-2 lg:flex-col">
-                {[0, 1, 2, 3, 4].map((index) => (
+                {NAV_ITEMS.map((item, index) => (
                     <a
                         key={index}
-                        className={`flex items-center justify-center w-1/5 lg:w-9/10 lg:h-1/5 cursor-pointer ${
+                        className={`flex flex-col gap-1 items-center justify-center w-1/4 lg:w-9/10 lg:h-1/4 cursor-pointer transition-text duration-300 z-10 ${
                             currentPage === index
-                                ? "text-white"
-                                : "text-gray-400"
-                        }`}
+                                ? "text-card"
+                                : "text-text-muted"
+                        } max-lg:text-text`}
                         onClick={() => setCurrentPage(index)}
                     >
-                        {index + 1}
+                        <item.Icon />
+                        <h1
+                            className={`lg:hidden text-xs ${currentPage === index && "text-blue-600"} transition-text duration-300`}
+                        >
+                            {item.label}
+                        </h1>
                     </a>
                 ))}
 
                 <div
                     style={{ left: `${leftPosition}%` }}
-                    className="lg:hidden absolute top-1/2 -translate-y-1/2 w-1/5 h-8/10 bg-black/60 rounded-full transition-all duration-300 pointer-events-none"
+                    className="lg:hidden absolute top-1/2 -translate-y-1/2 w-1/4 h-8/10 bg-border-light rounded-full transition-all duration-300 pointer-events-none z-2"
                 />
                 <div
                     style={{ top: `${topPosition}%` }}
-                    className="max-lg:hidden absolute w-10 h-10 bg-black/60 rounded-full transition-all duration-300 pointer-events-none -translate-y-1/2"
+                    className="max-lg:hidden absolute w-12 h-12 bg-text rounded-full transition-all duration-300 pointer-events-none -translate-y-1/2 z-2"
                 />
             </div>
         </nav>

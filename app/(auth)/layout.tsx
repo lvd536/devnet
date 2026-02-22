@@ -32,9 +32,7 @@ export default function AuthLayout({
     return (
         <>
             <NavBar />
-            <main className="w-full lg:w-[700px] bg-white/20 h-full">
-                {children}
-            </main>
+            <main className="w-full lg:w-[700px] h-full">{children}</main>
         </>
     );
 }

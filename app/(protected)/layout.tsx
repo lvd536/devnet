@@ -6,6 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { browserRoutes } from "@/consts/browserRoutes";
 import NavBar from "@/components/NavBar";
+import { setupUser } from "@/utils/firebaseFunctions";
 
 export default function ProtectedLayout({
     children,
@@ -22,8 +23,10 @@ export default function ProtectedLayout({
                 router.replace(browserRoutes.auth.login.link);
                 window.cookieStore.delete("uid");
             } else {
-                setAuthorized(true);
-                window.cookieStore.set("uid", user.uid);
+                setupUser(user).then(() => {
+                    setAuthorized(true);
+                    window.cookieStore.set("uid", user.uid);
+                });
             }
             setLoading(false);
         });
@@ -38,9 +41,7 @@ export default function ProtectedLayout({
     return (
         <>
             <NavBar />
-            <main className="w-full lg:w-[700px] bg-white/20 h-full">
-                {children}
-            </main>
+            <main className="w-full max-w-[700px] h-full">{children}</main>
         </>
     );
 }

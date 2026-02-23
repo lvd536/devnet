@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { browserRoutes } from "@/consts/browserRoutes";
+import { setupUser } from "@/utils/firebaseFunctions";
 
 export default function AuthLayout({
     children,
@@ -17,8 +18,10 @@ export default function AuthLayout({
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                router.replace(browserRoutes.home.link);
-                window.cookieStore.set("uid", user.uid);
+                setupUser(user).then(() => {
+                    router.replace(browserRoutes.home.link);
+                    window.cookieStore.set("uid", user.uid);
+                });
             }
             setLoading(false);
         });

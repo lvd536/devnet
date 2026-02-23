@@ -3,6 +3,7 @@ import {
     GithubAuthProvider,
     OAuthCredential,
     UserCredential,
+    User,
 } from "firebase/auth";
 import {
     collection,
@@ -15,6 +16,8 @@ import {
     where,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
+import { IUserProfile } from "@/interfaces/interfaces";
+import { setUserData, useUserProfileStore } from "@/stores/useProfileStore";
 
 export async function loginWithGithub(desiredUsername?: string) {
     const provider = new GithubAuthProvider();
@@ -65,9 +68,9 @@ export async function loginWithGithub(desiredUsername?: string) {
             const chosenUsername =
                 desiredUsername ?? githubLogin ?? user.displayName ?? user.uid;
 
-            tx.set(userRef, {
+            const newUser: IUserProfile = {
                 username: chosenUsername,
-                githubUsername: githubLogin ?? null,
+                githubUsername: githubLogin ?? user.photoURL ?? null,
                 avatarUrl: user.photoURL ?? null,
                 bio: "",
                 xp: 0,
@@ -78,10 +81,11 @@ export async function loginWithGithub(desiredUsername?: string) {
                 projectsCount: 0,
                 lastSyncAt: null,
                 createdAt: serverTimestamp(),
-            });
+            };
+
+            tx.set(userRef, newUser);
         });
     }
-
     return { isFirstAuth, uid: user.uid, githubLogin };
 }
 
@@ -90,4 +94,11 @@ export async function checkUsernameExists(username: string): Promise<boolean> {
     const q = query(usersRef, where("username", "==", username));
     const snap = await getDocs(q);
     return !snap.empty;
+}
+
+export async function setupUser(user: User) {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    setUserData(user, userSnap.data() as IUserProfile);
 }

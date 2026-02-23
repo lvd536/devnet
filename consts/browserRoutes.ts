@@ -21,4 +21,12 @@ export const browserRoutes = {
             link: "/register",
         },
     },
+    explore: {
+        name: "Explore page",
+        link: "/explore",
+    },
+    notifications: {
+        name: "Notify page",
+        link: "/notifications",
+    },
 } as const;

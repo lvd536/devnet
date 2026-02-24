@@ -14,3 +14,13 @@ export interface IUserProfile {
     lastSyncAt: null;
     createdAt: FieldValue;
 }
+
+export interface IProject {
+    ownerId: string;
+    repoName: string;
+    description: string;
+    stars: number;
+    language: string;
+    htmlUrl: string;
+    updatedAt: Date;
+}

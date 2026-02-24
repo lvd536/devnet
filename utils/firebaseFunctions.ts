@@ -17,7 +17,7 @@ import {
     where,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-import { IGitHubRepo, IUserProfile } from "@/interfaces/interfaces";
+import { IGitHubRepo, IProject, IUserProfile } from "@/interfaces/interfaces";
 import { setUserData } from "@/stores/useProfileStore";
 
 export async function loginWithGithub(desiredUsername?: string) {
@@ -130,21 +130,20 @@ async function fetchGithubRepos(
 
 async function saveReposToFirestore(userId: string, repos: IGitHubRepo[]) {
     for (const repo of repos) {
-        await setDoc(
-            doc(db, "projects", `${userId}_${repo.id}`),
-            {
-                ownerId: userId,
-                repoId: repo.id,
-                repoName: repo.name,
-                description: repo.description,
-                githubUrl: repo.html_url,
-                stars: repo.stargazers_count,
-                forks: repo.forks_count,
-                language: repo.language,
-                updatedAt: new Date(repo.updated_at).getTime(),
-                createdAt: Date.now(),
-            },
-            { merge: true },
-        );
+        const newRepo: IProject = {
+            ownerId: userId,
+            repoId: repo.id,
+            repoName: repo.name,
+            description: repo.description,
+            githubUrl: repo.html_url,
+            stars: repo.stargazers_count,
+            forks: repo.forks_count,
+            language: repo.language,
+            updatedAt: new Date(repo.updated_at).getTime(),
+            createdAt: Date.now(),
+        };
+        await setDoc(doc(db, "projects", `${userId}_${repo.id}`), newRepo, {
+            merge: true,
+        });
     }
 }

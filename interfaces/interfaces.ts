@@ -17,12 +17,15 @@ export interface IUserProfile {
 
 export interface IProject {
     ownerId: string;
+    repoId: number;
     repoName: string;
     description: string;
+    githubUrl: string;
     stars: number;
+    forks: number;
     language: string;
-    htmlUrl: string;
-    updatedAt: Date;
+    updatedAt: number;
+    createdAt: number;
 }
 
 export interface IGitHubRepo {

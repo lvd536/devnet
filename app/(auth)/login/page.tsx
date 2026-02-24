@@ -1,5 +1,7 @@
+"use client";
 import { browserRoutes } from "@/consts/browserRoutes";
 import logo from "@/public/logo.svg";
+import { loginWithGithub } from "@/utils/firebaseFunctions";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -19,7 +21,10 @@ export default function page() {
                         вашего GitHub.
                     </p>
                 </div>
-                <button className="h-12 px-12 rounded-full bg-text text-background font-medium mt-5">
+                <button
+                    className="h-12 px-12 rounded-full bg-text text-background font-medium mt-5"
+                    onClick={() => loginWithGithub()}
+                >
                     Войти с помощью GitHub
                 </button>
                 <div className="flex gap-1 font-medium text-sm mt-1">

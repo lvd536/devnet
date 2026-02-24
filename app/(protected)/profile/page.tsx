@@ -1,14 +1,24 @@
 "use client";
 import { useUserProfileStore } from "@/stores/useProfileStore";
 import Image from "next/image";
-import { Calendar } from "lucide-react";
+import { Calendar, LogOut } from "lucide-react";
 import { Timestamp } from "firebase/firestore";
+import { auth } from "@/lib/firebase";
 
 export default function page() {
-    const { profile } = useUserProfileStore();
+    const { profile, setProfile, setRepositories, setUser } =
+        useUserProfileStore();
     if (!profile) return null;
 
     const date = (profile.createdAt as Timestamp).toDate();
+
+    const handleLogOut = () => {
+        auth.signOut().then(() => {
+            setProfile(null);
+            setUser(null);
+            setRepositories(null);
+        });
+    };
 
     return (
         <div className="flex flex-col gap-2 mt-10">
@@ -26,12 +36,20 @@ export default function page() {
                     ) : (
                         <div className="w-20 h-20 rounded-full ring-8 ring-background" />
                     )}
-                    <button
-                        type="button"
-                        className="self-end rounded-full bg-text text-background p-2 font-semibold text-xs mr-10"
-                    >
-                        Редактировать
-                    </button>
+                    <div className="flex self-end items-center gap-2 mr-10">
+                        <button
+                            type="button"
+                            className="rounded-full bg-text text-background p-2 font-semibold text-xs"
+                        >
+                            Редактировать
+                        </button>
+                        <LogOut
+                            width={32}
+                            height={32}
+                            onClick={handleLogOut}
+                            className="p-2 rounded-full bg-text text-red-500"
+                        />
+                    </div>
                 </div>
             </div>
             <div className="font-medium w-full flex flex-col items-start justify-center gap-2 mt-12">

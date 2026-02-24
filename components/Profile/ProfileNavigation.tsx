@@ -1,0 +1,32 @@
+"use client";
+
+import { useState } from "react";
+
+export default function ProfileNavigation() {
+    const [currentPage, setCurrentPage] = useState<"posts" | "likes">("posts");
+    return (
+        <div className="flex relative items-center justify-center w-full h-12 mt-4 bg-border-light/80 rounded-full">
+            <p
+                className={`flex flex-col gap-1 items-center justify-center w-1/4 lg:w-9/10 lg:h-1/4 cursor-pointer transition-text duration-300 z-10 ${
+                    currentPage === "posts" ? "text-text" : "text-text-muted"
+                } max-lg:text-text`}
+                onClick={() => setCurrentPage("posts")}
+            >
+                Посты
+            </p>
+            <p
+                className={`flex flex-col gap-1 items-center justify-center w-1/4 lg:w-9/10 lg:h-1/4 cursor-pointer transition-text duration-300 z-10 ${
+                    currentPage === "likes" ? "text-text" : "text-text-muted"
+                } max-lg:text-text`}
+                onClick={() => setCurrentPage("likes")}
+            >
+                Лайки
+            </p>
+
+            <div
+                style={{ left: `${currentPage === "posts" ? 0 : 1 * 48}%` }}
+                className="absolute top-1/2 -translate-y-1/2 w-1/2 h-8/10 bg-border-light rounded-full transition-all duration-300 pointer-events-none z-2 mx-2"
+            />
+        </div>
+    );
+}

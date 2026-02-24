@@ -13,14 +13,16 @@ import {
     query,
     runTransaction,
     serverTimestamp,
+    setDoc,
     where,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-import { IUserProfile } from "@/interfaces/interfaces";
-import { setUserData, useUserProfileStore } from "@/stores/useProfileStore";
+import { IGitHubRepo, IUserProfile } from "@/interfaces/interfaces";
+import { setUserData } from "@/stores/useProfileStore";
 
 export async function loginWithGithub(desiredUsername?: string) {
     const provider = new GithubAuthProvider();
+    provider.addScope("repo");
 
     const result: UserCredential = await signInWithPopup(auth, provider);
     const user = result.user;
@@ -45,6 +47,9 @@ export async function loginWithGithub(desiredUsername?: string) {
             } else {
                 console.warn("GitHub /user returned non-OK:", res.status);
             }
+
+            const repos = await fetchGithubRepos(accessToken);
+            if (repos) await saveReposToFirestore(user.uid, repos);
         } catch (err) {
             console.warn("Failed to fetch GitHub user:", err);
         }
@@ -101,4 +106,45 @@ export async function setupUser(user: User) {
     const userSnap = await getDoc(userRef);
 
     setUserData(user, userSnap.data() as IUserProfile);
+}
+
+async function fetchGithubRepos(
+    accessToken: string,
+): Promise<IGitHubRepo[] | undefined> {
+    const res = await fetch(
+        "https://api.github.com/user/repos?per_page=50&sort=updated",
+        {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                Accept: "application/vnd.github+json",
+            },
+        },
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch repos");
+    }
+
+    return await res.json();
+}
+
+async function saveReposToFirestore(userId: string, repos: IGitHubRepo[]) {
+    for (const repo of repos) {
+        await setDoc(
+            doc(db, "projects", `${userId}_${repo.id}`),
+            {
+                ownerId: userId,
+                repoId: repo.id,
+                repoName: repo.name,
+                description: repo.description,
+                githubUrl: repo.html_url,
+                stars: repo.stargazers_count,
+                forks: repo.forks_count,
+                language: repo.language,
+                updatedAt: new Date(repo.updated_at).getTime(),
+                createdAt: Date.now(),
+            },
+            { merge: true },
+        );
+    }
 }

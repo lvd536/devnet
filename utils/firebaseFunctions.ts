@@ -4,6 +4,7 @@ import {
     OAuthCredential,
     UserCredential,
     User,
+    reauthenticateWithPopup,
 } from "firebase/auth";
 import {
     collection,
@@ -14,11 +15,12 @@ import {
     runTransaction,
     serverTimestamp,
     setDoc,
+    updateDoc,
     where,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { IGitHubRepo, IProject, IUserProfile } from "@/interfaces/interfaces";
-import { setUserData } from "@/stores/useProfileStore";
+import { setUserData, useUserProfileStore } from "@/stores/useProfileStore";
 
 export async function loginWithGithub(desiredUsername?: string) {
     const provider = new GithubAuthProvider();
@@ -142,8 +144,35 @@ async function saveReposToFirestore(userId: string, repos: IGitHubRepo[]) {
             updatedAt: new Date(repo.updated_at).getTime(),
             createdAt: Date.now(),
         };
+        useUserProfileStore.getState().pushRepo(newRepo);
         await setDoc(doc(db, "projects", `${userId}_${repo.id}`), newRepo, {
             merge: true,
         });
+    }
+}
+
+export async function handleSync() {
+    try {
+        const provider = new GithubAuthProvider();
+        provider.addScope("repo");
+
+        const result = await reauthenticateWithPopup(
+            auth.currentUser!,
+            provider,
+        );
+
+        const credential = GithubAuthProvider.credentialFromResult(result);
+
+        const token = credential?.accessToken;
+
+        const userRef = doc(db, "users", auth.currentUser!.uid);
+        updateDoc(userRef, {
+            avatarUrl: auth.currentUser!.photoURL ?? null,
+        });
+
+        const repos = await fetchGithubRepos(token!);
+        if (repos) await saveReposToFirestore(auth.currentUser!.uid, repos);
+    } catch (err) {
+        console.error(err);
     }
 }

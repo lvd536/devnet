@@ -1,9 +1,10 @@
 "use client";
 import { useUserProfileStore } from "@/stores/useProfileStore";
 import Image from "next/image";
-import { Calendar, LogOut } from "lucide-react";
+import { Calendar, LogOut, RefreshCcw } from "lucide-react";
 import { Timestamp } from "firebase/firestore";
 import { auth } from "@/lib/firebase";
+import { handleSync } from "@/utils/firebaseFunctions";
 
 export default function page() {
     const { profile, setProfile, setRepositories, setUser } =
@@ -20,11 +21,15 @@ export default function page() {
         });
     };
 
+    const handleSyncRepos = () => {
+        handleSync().then(() => window.location.reload());
+    };
+
     return (
-        <div className="flex flex-col gap-2 mt-10">
+        <div className="flex flex-col gap-2 mt-2 max-lg:mx-2 lg:mt-10">
             <div className="relative w-full">
                 <div className="w-full h-50 bg-linear-to-r from-violet-600 to-indigo-600 rounded-2xl" />
-                <div className="flex w-full justify-between absolute -bottom-10 left-5">
+                <div className="absolute -bottom-10 inset-x-5 flex justify-between">
                     {profile.avatarUrl ? (
                         <Image
                             src={profile.avatarUrl}
@@ -36,13 +41,19 @@ export default function page() {
                     ) : (
                         <div className="w-20 h-20 rounded-full ring-8 ring-background" />
                     )}
-                    <div className="flex self-end items-center gap-2 mr-10">
+                    <div className="flex self-end items-center gap-2">
                         <button
                             type="button"
                             className="rounded-full bg-text text-background p-2 font-semibold text-xs"
                         >
                             Редактировать
                         </button>
+                        <RefreshCcw
+                            width={32}
+                            height={32}
+                            onClick={handleSyncRepos}
+                            className="p-2 rounded-full bg-text text-green-500"
+                        />
                         <LogOut
                             width={32}
                             height={32}

@@ -48,7 +48,12 @@ export const useUserProfileStore = create<IUserProfileStore>()((set, get) => ({
     },
 }));
 
-export const setUserData = (user: User, profile: IUserProfile) => {
+export const setUserData = (
+    user: User,
+    profile: IUserProfile,
+    repositories?: IProject[],
+) => {
     useUserProfileStore.getState().setProfile(profile);
     useUserProfileStore.getState().setUser(user);
+    if (repositories) useUserProfileStore.getState().setRepositories(repositories)
 };

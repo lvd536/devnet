@@ -105,9 +105,22 @@ export async function checkUsernameExists(username: string): Promise<boolean> {
 
 export async function setupUser(user: User) {
     const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
+    const projectsRef = collection(db, "projects");
+    const q = query(projectsRef, where("ownerId", "==", user.uid));
 
-    setUserData(user, userSnap.data() as IUserProfile);
+    const [userSnap, projectsSnap] = await Promise.all([
+        await getDoc(userRef),
+        await getDocs(q),
+    ]);
+
+    setUserData(
+        user,
+        userSnap.data() as IUserProfile,
+        projectsSnap.docs.map((proj) => ({
+            id: proj.id,
+            ...(proj.data() as IProject),
+        })),
+    );
 }
 
 async function fetchGithubRepos(

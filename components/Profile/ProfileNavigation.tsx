@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+interface IProps {
+    currentPage: "posts" | "likes";
+    setCurrentPage: (value: React.SetStateAction<"posts" | "likes">) => void;
+}
 
-export default function ProfileNavigation() {
-    const [currentPage, setCurrentPage] = useState<"posts" | "likes">("posts");
+export default function ProfileNavigation({
+    currentPage,
+    setCurrentPage,
+}: IProps) {
     return (
         <div className="flex relative items-center justify-center w-full h-12 mt-4 bg-border-light/80 rounded-full">
             <p

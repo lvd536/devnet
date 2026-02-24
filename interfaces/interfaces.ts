@@ -39,3 +39,16 @@ export interface IGitHubRepo {
     updated_at: string;
     private: boolean;
 }
+
+export interface IPost {
+    id: string;
+    authorId: string;
+
+    content: string;
+    projectId?: string;
+
+    likesCount: number;
+    commentsCount: number;
+
+    createdAt: number;
+}

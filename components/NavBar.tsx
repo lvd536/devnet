@@ -21,7 +21,7 @@ export default function NavBar() {
                 height={60}
                 className="max-lg:hidden lg:mb-6"
             />
-            <div className="flex items-center justify-center max-lg:fixed max-lg:inset-x-0 max-lg:mx-auto bg-background bottom-4 left-0 w-[calc(100vw-16px)] h-[68px] lg:h-[350px] lg:w-[74px] rounded-full ring ring-border">
+            <div className="flex items-center justify-center max-lg:fixed max-lg:inset-x-0 max-lg:mx-auto bg-background bottom-4 left-0 w-[calc(100vw-16px)] h-17 lg:h-87.5 lg:w-18.5 rounded-full ring ring-border">
                 <nav className="flex relative items-center justify-center w-full h-full mx-2 lg:flex-col">
                     {NAV_ITEMS.map((item, index) => (
                         <Link

@@ -38,7 +38,7 @@ export default function Post({ post }: IProps) {
                         {user.githubUsername || user.username}
                     </span>
                     {user.githubUsername && (
-                        <span className="text-shadow-text-secondary text-muted-foreground">
+                        <span className="text-sm text-text-secondary text-muted-foreground">
                             @{user.username}
                         </span>
                     )}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import ProfileNavigation from "./ProfileNavigation";
-import ProfilePosts from "./ProfilePosts";
+import ProfilePosts from "./Posts/ProfilePosts";
 import ProfileLikes from "./ProfileLikes";
 
 export default function ProfileBody() {

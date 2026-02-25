@@ -4,12 +4,12 @@ import { useUserProfileStore } from "@/stores/useProfileStore";
 import Image from "next/image";
 import { BookPlus, MessageSquareOff, BookMinus } from "lucide-react";
 import { useState } from "react";
-import ProfileReposModal from "./ProfileReposModal";
 import { IProject } from "@/interfaces/interfaces";
-import Repository from "../Repository";
+import Repository from "../../Repository";
 import { sendPost } from "@/utils/firebaseFunctions";
+import ProfileReposModal from "../ProfileReposModal";
 
-export default function ProfilePosts() {
+export default function ProfilePostCreation() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [selectedRepo, setSelectedRepo] = useState<IProject | null>(null);
     const [message, setMessage] = useState<string>("");
@@ -27,7 +27,7 @@ export default function ProfilePosts() {
     };
 
     return (
-        <div className="flex flex-col gap-2 items-center justify-center">
+        <>
             <div className="flex w-full min-h-40 rounded-2xl bg-card p-4 gap-4">
                 {profile.avatarUrl ? (
                     <Image
@@ -87,12 +87,11 @@ export default function ProfilePosts() {
                     </div>
                 </div>
             </div>
-            <div>Постов нет</div>
             <ProfileReposModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 setSelectedRepo={setSelectedRepo}
             />
-        </div>
+        </>
     );
 }

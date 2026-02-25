@@ -20,7 +20,12 @@ import {
     where,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-import { IGitHubRepo, IProject, IUserProfile } from "@/interfaces/interfaces";
+import {
+    IGitHubRepo,
+    IPost,
+    IProject,
+    IUserProfile,
+} from "@/interfaces/interfaces";
 import { setUserData, useUserProfileStore } from "@/stores/useProfileStore";
 
 export async function loginWithGithub(desiredUsername?: string) {
@@ -209,4 +214,44 @@ export async function sendPost(content?: string, projectId?: string) {
     } catch (err) {
         console.error(err);
     }
+}
+
+export async function getProjectData(projectId: string) {
+    try {
+        const projectRef = doc(db, "projects", projectId);
+        const projectSnapshot = await getDoc(projectRef);
+        if (projectSnapshot.exists()) {
+            const project = {
+                id: projectSnapshot.id,
+                ...projectSnapshot.data(),
+            } as IProject;
+            return project;
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function getUserData(userId: string) {
+    try {
+        const userRef = doc(db, "users", userId);
+        const userSnapshot = await getDoc(userRef);
+        if (userSnapshot.exists()) {
+            const user = {
+                id: userSnapshot.id,
+                ...userSnapshot.data(),
+            } as IUserProfile;
+            return user;
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function getPostData(post: IPost) {
+    const project = post.projectId
+        ? await getProjectData(post.projectId)
+        : undefined;
+    const user = await getUserData(post.authorId);
+    return { project, user };
 }

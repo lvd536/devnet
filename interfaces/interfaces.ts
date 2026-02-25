@@ -1,6 +1,7 @@
 import type { FieldValue } from "firebase/firestore";
 
 export interface IUserProfile {
+    id?: string;
     username: string;
     githubUsername: string | null;
     avatarUrl: string | null;

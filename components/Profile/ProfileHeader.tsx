@@ -39,7 +39,11 @@ export default function ProfileHeader() {
                             className="rounded-full ring-8 ring-background"
                         />
                     ) : (
-                        <div className="w-20 h-20 rounded-full ring-8 ring-background" />
+                        <div className="flex items-center justify-center w-20 h-20 rounded-full ring-8 ring-background">
+                            {profile.githubUsername
+                                ? profile.githubUsername[0].toUpperCase()
+                                : profile.username[0].toUpperCase()}
+                        </div>
                     )}
                     <div className="flex self-end items-center gap-2">
                         <button

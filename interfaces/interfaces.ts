@@ -16,6 +16,7 @@ export interface IUserProfile {
 }
 
 export interface IProject {
+    id: string;
     ownerId: string;
     repoId: number;
     repoName: string;

@@ -7,6 +7,7 @@ import {
     reauthenticateWithPopup,
 } from "firebase/auth";
 import {
+    addDoc,
     collection,
     doc,
     getDoc,
@@ -116,10 +117,13 @@ export async function setupUser(user: User) {
     setUserData(
         user,
         userSnap.data() as IUserProfile,
-        projectsSnap.docs.map((proj) => ({
-            id: proj.id,
-            ...(proj.data() as IProject),
-        })),
+        projectsSnap.docs.map(
+            (proj) =>
+                ({
+                    id: proj.id,
+                    ...proj.data(),
+                }) as IProject,
+        ),
     );
 }
 
@@ -145,7 +149,8 @@ async function fetchGithubRepos(
 
 async function saveReposToFirestore(userId: string, repos: IGitHubRepo[]) {
     for (const repo of repos) {
-        const newRepo: IProject = {
+        const newRepo = {
+            id: `${userId}_${repo.id}`,
             ownerId: userId,
             repoId: repo.id,
             repoName: repo.name,
@@ -185,6 +190,22 @@ export async function handleSync() {
 
         const repos = await fetchGithubRepos(token!);
         if (repos) await saveReposToFirestore(auth.currentUser!.uid, repos);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function sendPost(content?: string, projectId?: string) {
+    try {
+        const post = {
+            authorId: auth.currentUser!.uid,
+            content,
+            projectId,
+            likesCount: 0,
+            commentsCount: 0,
+            createdAt: Date.now(),
+        };
+        await addDoc(collection(db, "posts"), post);
     } catch (err) {
         console.error(err);
     }

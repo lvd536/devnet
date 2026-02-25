@@ -7,6 +7,7 @@ import { useState } from "react";
 import ProfileReposModal from "./ProfileReposModal";
 import { IProject } from "@/interfaces/interfaces";
 import Repository from "../Repository";
+import { sendPost } from "@/utils/firebaseFunctions";
 
 export default function ProfilePosts() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -15,6 +16,15 @@ export default function ProfilePosts() {
     const { profile } = useUserProfileStore();
 
     if (!profile) return null;
+
+    const handleSendPost = () => {
+        if (!message && !selectedRepo) return;
+
+        sendPost(message, selectedRepo?.id).then(() => {
+            setMessage("");
+            setSelectedRepo(null);
+        });
+    };
 
     return (
         <div className="flex flex-col gap-2 items-center justify-center">
@@ -68,7 +78,10 @@ export default function ProfilePosts() {
                                 onClick={() => setSelectedRepo(null)}
                             />
                         </div>
-                        <button className="rounded-full bg-text text-background py-2 px-4">
+                        <button
+                            className="rounded-full bg-text text-background py-2 px-4"
+                            onClick={handleSendPost}
+                        >
                             Опубликовать
                         </button>
                     </div>

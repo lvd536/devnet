@@ -80,6 +80,7 @@ export default function PostCreation() {
                             />
                         </div>
                         <button
+                            type="button"
                             className="rounded-full bg-text text-background py-2 px-4"
                             onClick={handleSendPost}
                         >

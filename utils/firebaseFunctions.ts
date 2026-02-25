@@ -200,12 +200,12 @@ export async function handleSync() {
     }
 }
 
-export async function sendPost(content?: string, projectId?: string) {
+export async function sendPost(content?: string, projectId?: string | null) {
     try {
         const post = {
             authorId: auth.currentUser!.uid,
             content,
-            projectId,
+            projectId: projectId ?? null,
             likesCount: 0,
             commentsCount: 0,
             createdAt: Date.now(),

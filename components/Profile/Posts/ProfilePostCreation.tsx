@@ -23,6 +23,7 @@ export default function ProfilePostCreation() {
         sendPost(message, selectedRepo?.id).then(() => {
             setMessage("");
             setSelectedRepo(null);
+            window.location.reload();
         });
     };
 

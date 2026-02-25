@@ -1,26 +1,28 @@
 import { IPost } from "@/interfaces/interfaces";
-import { getPostData } from "@/utils/firebaseFunctions";
 import Image from "next/image";
 import Repository from "./Repository";
+import usePostData from "@/hooks/usePostData";
 
 interface IProps {
     post: IPost;
 }
 
-export default async function Post({ post }: IProps) {
-    const { project, user } = await getPostData(post);
+export default function Post({ post }: IProps) {
+    const { project, user, loading, error } = usePostData({ post });
 
     if (!user) return null;
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="flex gap-2 bg-card rounded-lg">
+        <div className="flex w-full gap-4 bg-card rounded-xl p-4">
             {user.avatarUrl ? (
                 <Image
                     src={user.avatarUrl}
                     alt="user avatar"
                     width={40}
                     height={40}
-                    className="rounded-full ring ring-background"
+                    className="w-10 h-10 rounded-full ring ring-background"
                 />
             ) : (
                 <div className="w-10 h-10 rounded-full ring ring-background">
@@ -29,17 +31,18 @@ export default async function Post({ post }: IProps) {
                         : user.username[0].toUpperCase()}
                 </div>
             )}
-            <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-1">
+            <div className="flex w-full flex-col gap-1">
+                <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold">
                         {user.githubUsername || user.username}
                     </span>
                     {user.githubUsername && (
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-shadow-text-secondary text-muted-foreground">
                             @{user.username}
                         </span>
                     )}
-                    <p>
+                    <p className="w-1 h-1 bg-backdrop-background rounded-full" />
+                    <p className="text-xs text-muted">
                         {new Date(post.createdAt).toLocaleDateString("ru-RU", {
                             day: "numeric",
                             month: "long",
@@ -48,7 +51,9 @@ export default async function Post({ post }: IProps) {
                     </p>
                 </div>
                 {post.content && <p>{post.content}</p>}
-                {project && <Repository repo={project} />}
+                {project && (
+                    <Repository repo={project} className="bg-background" />
+                )}
             </div>
         </div>
     );

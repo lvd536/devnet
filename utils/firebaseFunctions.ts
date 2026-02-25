@@ -255,3 +255,32 @@ export async function getPostData(post: IPost) {
     const user = await getUserData(post.authorId);
     return { project, user };
 }
+
+export async function getUserPosts(userId: string) {
+    const postsRef = collection(db, "posts");
+    const q = query(postsRef, where("authorId", "==", userId));
+    const postsSnap = await getDocs(q);
+
+    if (!postsSnap.empty) {
+        return postsSnap.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        })) as IPost[];
+    }
+
+    return undefined;
+}
+
+export async function getAllPosts() {
+    const postsRef = collection(db, "posts");
+    const postsSnap = await getDocs(postsRef);
+
+    if (!postsSnap.empty) {
+        return postsSnap.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        })) as IPost[];
+    }
+
+    return undefined;
+}

@@ -2,6 +2,7 @@ import { IPost } from "@/interfaces/interfaces";
 import Image from "next/image";
 import Repository from "./Repository";
 import usePostData from "@/hooks/usePostData";
+import { Heart, MessageSquareMore } from "lucide-react";
 
 interface IProps {
     post: IPost;
@@ -54,6 +55,16 @@ export default function Post({ post }: IProps) {
                 {project && (
                     <Repository repo={project} className="bg-background" />
                 )}
+                <div className="flex items-center gap-4 mt-2">
+                    <div className="flex items-center gap-2">
+                        <Heart className="w-5 h-5 text-text-muted" />
+                        <span className="text-sm text-text-muted">0</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <MessageSquareMore className="w-5 h-5 text-text-muted" />
+                        <span className="text-sm text-text-muted">0</span>
+                    </div>
+                </div>
             </div>
         </div>
     );

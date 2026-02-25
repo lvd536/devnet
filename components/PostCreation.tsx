@@ -5,11 +5,11 @@ import Image from "next/image";
 import { BookPlus, MessageSquareOff, BookMinus } from "lucide-react";
 import { useState } from "react";
 import { IProject } from "@/interfaces/interfaces";
-import Repository from "../../Repository";
+import Repository from "./Repository";
 import { sendPost } from "@/utils/firebaseFunctions";
-import ProfileReposModal from "../ProfileReposModal";
+import ProfileReposModal from "./Profile/ProfileReposModal";
 
-export default function ProfilePostCreation() {
+export default function PostCreation() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [selectedRepo, setSelectedRepo] = useState<IProject | null>(null);
     const [message, setMessage] = useState<string>("");

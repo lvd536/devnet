@@ -41,7 +41,9 @@ export default function ProtectedLayout({
     return (
         <>
             <NavBar />
-            <main className="w-full max-w-[700px] h-full">{children}</main>
+            <main className="w-full max-w-175 h-full mt-2 max-lg:mx-2 lg:mt-10">
+                {children}
+            </main>
         </>
     );
 }

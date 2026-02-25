@@ -1,4 +1,4 @@
-import ProfilePostCreation from "./ProfilePostCreation";
+import ProfilePostCreation from "../../PostCreation";
 import ProfilePostList from "./ProfilePostList";
 
 export default function ProfilePosts() {

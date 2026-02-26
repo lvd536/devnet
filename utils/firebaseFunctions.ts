@@ -284,3 +284,10 @@ export async function getAllPosts() {
 
     return undefined;
 }
+
+export async function getPost(postId: string) {
+    const postRef = doc(db, "posts", postId);
+    const postSnap = await getDoc(postRef);
+    if (!postSnap.exists) return undefined;
+    return { id: postSnap.id, ...postSnap.data() } as IPost;
+}

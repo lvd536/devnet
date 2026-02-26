@@ -1,10 +1,10 @@
-import ProfilePostCreation from "../../PostCreation";
+import PostCreation from "../../Post/PostCreation";
 import ProfilePostList from "./ProfilePostList";
 
 export default function ProfilePosts() {
     return (
         <div className="flex flex-col gap-2 items-center justify-center">
-            <ProfilePostCreation />
+            <PostCreation />
             <ProfilePostList />
         </div>
     );

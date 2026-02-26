@@ -1,4 +1,4 @@
-import PostCreation from "../PostCreation";
+import PostCreation from "../Post/PostCreation";
 import HomePostList from "./HomePostList";
 
 export default function HomePosts() {

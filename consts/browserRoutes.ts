@@ -29,4 +29,8 @@ export const browserRoutes = {
         name: "Notify page",
         link: "/notifications",
     },
+    post: {
+        name: "User Post",
+        link: (postId: string) => `/post/${postId}`,
+    },
 } as const;

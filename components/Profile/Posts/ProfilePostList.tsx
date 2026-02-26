@@ -1,5 +1,5 @@
 "use client";
-import Post from "@/components/Post";
+import Post from "@/components/Post/Post";
 import useProfilePosts from "@/hooks/useProfilePosts";
 import { auth } from "@/lib/firebase";
 

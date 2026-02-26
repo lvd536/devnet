@@ -5,9 +5,9 @@ import Image from "next/image";
 import { BookPlus, MessageSquareOff, BookMinus } from "lucide-react";
 import { useState } from "react";
 import { IProject } from "@/interfaces/interfaces";
-import Repository from "./Repository";
+import Repository from "../Repository";
 import { sendPost } from "@/utils/firebaseFunctions";
-import ProfileReposModal from "./Profile/ProfileReposModal";
+import ProfileReposModal from "../Profile/ProfileReposModal";
 
 export default function PostCreation() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -33,7 +33,7 @@ export default function PostCreation() {
                 {profile.avatarUrl ? (
                     <Image
                         src={profile.avatarUrl}
-                        alt=""
+                        alt="profile avatar"
                         width={40}
                         height={40}
                         className="w-10 h-10 rounded-full"
@@ -47,7 +47,7 @@ export default function PostCreation() {
                         id="postTextInput"
                         placeholder="Что нового?"
                         className="outline-0 w-full h-20 resize-none"
-                        maxLength={950}
+                        maxLength={3500}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                     />

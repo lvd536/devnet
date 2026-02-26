@@ -1,5 +1,5 @@
 import useAllPosts from "@/hooks/useAllPosts";
-import Post from "../Post";
+import Post from "../Post/Post";
 
 export default function HomePostList() {
     const { loading, posts, error } = useAllPosts();

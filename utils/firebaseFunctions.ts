@@ -295,27 +295,60 @@ export async function getPost(postId: string) {
 
 export async function addLike(postId: string, userId: string) {
     try {
-        await setDoc(doc(db, "posts", postId, "likes", userId), {
-            createdAt: Date.now(),
+        const postRef = doc(db, "posts", postId);
+        const likeRef = doc(db, "posts", postId, "likes", userId);
+
+        await runTransaction(db, async (tx) => {
+            const postSnap = await tx.get(postRef);
+            if (!postSnap.exists()) throw new Error("Post does not exist");
+
+            const likeSnap = await tx.get(likeRef);
+            if (likeSnap.exists()) return;
+
+            tx.set(likeRef, {
+                createdAt: serverTimestamp(),
+                userId,
+            });
+
+            const currentLikes = (postSnap.data()?.likesCount as number) || 0;
+            tx.update(postRef, {
+                likesCount: currentLikes + 1,
+            });
         });
     } catch (err) {
-        console.error(err);
+        console.error("addLike error:", err);
     }
 }
 
 export async function deleteLike(postId: string, userId: string) {
     try {
+        const postRef = doc(db, "posts", postId);
         const likeRef = doc(db, "posts", postId, "likes", userId);
-        await deleteDoc(likeRef);
+
+        await runTransaction(db, async (tx) => {
+            const postSnap = await tx.get(postRef);
+            if (!postSnap.exists()) throw new Error("Post does not exist");
+
+            const likeSnap = await tx.get(likeRef);
+            if (!likeSnap.exists()) return;
+
+            tx.delete(likeRef);
+
+            const currentLikes = (postSnap.data()?.likesCount as number) || 0;
+            tx.update(postRef, {
+                likesCount: currentLikes > 0 ? currentLikes - 1 : 0,
+            });
+        });
     } catch (err) {
-        console.error(err);
+        console.error("deleteLike error:", err);
     }
 }
 
 export async function getLikes(postId: string) {
-    const likes = await getDocs(collection(db, "posts", postId, "likes"));
-
-    return likes.empty ? undefined : likes.docs;
+    const likesSnapshot = await getDocs(
+        collection(db, "posts", postId, "likes"),
+    );
+    return likesSnapshot.empty ? undefined : likesSnapshot.docs;
 }
 
 export async function addComment(
@@ -324,28 +357,61 @@ export async function addComment(
     message: string,
 ) {
     try {
-        await addDoc(collection(db, "posts", postId, "comments"), {
-            authorId: userId,
-            content: message,
-            createdAt: Date.now(),
+        const postRef = doc(db, "posts", postId);
+        const commentsCol = collection(db, "posts", postId, "comments");
+        const commentRef = doc(commentsCol);
+
+        await runTransaction(db, async (tx) => {
+            const postSnap = await tx.get(postRef);
+            if (!postSnap.exists()) throw new Error("Post does not exist");
+
+            tx.set(commentRef, {
+                authorId: userId,
+                content: message,
+                createdAt: serverTimestamp(),
+            });
+
+            const currentComments =
+                (postSnap.data()?.commentsCount as number) || 0;
+            tx.update(postRef, {
+                commentsCount: currentComments + 1,
+            });
         });
     } catch (err) {
-        console.error(err);
+        console.error("addComment error:", err);
     }
 }
 
 export async function deleteComment(postId: string, commentId: string) {
     try {
-        await deleteDoc(doc(db, "posts", postId, "comments", commentId));
+        const postRef = doc(db, "posts", postId);
+        const commentRef = doc(db, "posts", postId, "comments", commentId);
+
+        await runTransaction(db, async (tx) => {
+            const postSnap = await tx.get(postRef);
+            if (!postSnap.exists()) throw new Error("Post does not exist");
+
+            const commentSnap = await tx.get(commentRef);
+            if (!commentSnap.exists()) return;
+
+            tx.delete(commentRef);
+
+            const currentComments =
+                (postSnap.data()?.commentsCount as number) || 0;
+            tx.update(postRef, {
+                commentsCount: currentComments > 0 ? currentComments - 1 : 0,
+            });
+        });
     } catch (err) {
-        console.error(err);
+        console.error("deleteComment error:", err);
     }
 }
 
 export async function getComments(postId: string) {
-    const comment = await getDocs(collection(db, "posts", postId, "comments"));
-
-    return comment.empty ? undefined : comment.docs;
+    const commentSnap = await getDocs(
+        collection(db, "posts", postId, "comments"),
+    );
+    return commentSnap.empty ? undefined : commentSnap.docs;
 }
 
 export async function addFollower(targetUserId: string, currentUserId: string) {

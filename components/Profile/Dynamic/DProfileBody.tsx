@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import ProfileNavigation from "./ProfileNavigation";
-import ProfilePosts from "./Posts/ProfilePosts";
-import ProfileLikes from "./Posts/ProfileLikes";
+import ProfileNavigation from "../ProfileNavigation";
+import DProfilePosts from "./DProfilePosts";
+import DProfileLikes from "./DProfileLikes";
 
-export default function ProfileBody() {
+export default function DProfileBody() {
     const [currentPage, setCurrentPage] = useState<"posts" | "likes">("posts");
 
     return (
@@ -14,8 +14,8 @@ export default function ProfileBody() {
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
             />
-            {currentPage === "posts" && <ProfilePosts />}
-            {currentPage === "likes" && <ProfileLikes />}
+            {currentPage === "posts" && <DProfilePosts />}
+            {currentPage === "likes" && <DProfileLikes />}
         </>
     );
 }

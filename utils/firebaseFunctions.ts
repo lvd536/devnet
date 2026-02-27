@@ -440,19 +440,126 @@ export async function getComments(postId: string) {
           })) as IComment[]);
 }
 
-export async function addFollower(targetUserId: string, currentUserId: string) {
+export async function addFollower(
+    targetUserId: string,
+    currentUserId: string,
+): Promise<boolean> {
     try {
-        await setDoc(
-            doc(db, "users", targetUserId, "followers", currentUserId),
-            { createdAt: Date.now() },
+        const targetRef = doc(db, "users", targetUserId);
+        const currentRef = doc(db, "users", currentUserId);
+
+        const followerRef = doc(
+            db,
+            "users",
+            targetUserId,
+            "followers",
+            currentUserId,
+        );
+        const followingRef = doc(
+            db,
+            "users",
+            currentUserId,
+            "following",
+            targetUserId,
         );
 
-        await setDoc(
-            doc(db, "users", currentUserId, "following", targetUserId),
-            { createdAt: Date.now() },
-        );
+        await runTransaction(db, async (tx) => {
+            const [targetSnap, currentSnap, followerSnap] = await Promise.all([
+                tx.get(targetRef),
+                tx.get(currentRef),
+                tx.get(followerRef),
+            ]);
+
+            if (!targetSnap.exists()) {
+                throw new Error("Target user does not exist");
+            }
+            if (!currentSnap.exists()) {
+                throw new Error("Current user does not exist");
+            }
+
+            if (followerSnap.exists()) {
+                return;
+            }
+
+            tx.set(followerRef, { createdAt: serverTimestamp() });
+            tx.set(followingRef, { createdAt: serverTimestamp() });
+
+            const targetFollowersCount =
+                (targetSnap.data()?.followersCount as number) || 0;
+            const currentFollowingCount =
+                (currentSnap.data()?.followingCount as number) || 0;
+
+            tx.update(targetRef, { followersCount: targetFollowersCount + 1 });
+            tx.update(currentRef, {
+                followingCount: currentFollowingCount + 1,
+            });
+        });
+
+        return true;
     } catch (err) {
-        console.error(err);
+        console.error("addFollower error:", err);
+        return false;
+    }
+}
+
+export async function removeFollower(
+    targetUserId: string,
+    currentUserId: string,
+): Promise<boolean> {
+    try {
+        const targetRef = doc(db, "users", targetUserId);
+        const currentRef = doc(db, "users", currentUserId);
+
+        const followerRef = doc(
+            db,
+            "users",
+            targetUserId,
+            "followers",
+            currentUserId,
+        );
+        const followingRef = doc(
+            db,
+            "users",
+            currentUserId,
+            "following",
+            targetUserId,
+        );
+
+        await runTransaction(db, async (tx) => {
+            const [targetSnap, currentSnap, followerSnap] = await Promise.all([
+                tx.get(targetRef),
+                tx.get(currentRef),
+                tx.get(followerRef),
+            ]);
+
+            if (!targetSnap.exists() || !currentSnap.exists()) {
+                throw new Error("One of users does not exist");
+            }
+
+            if (!followerSnap.exists()) {
+                return;
+            }
+
+            tx.delete(followerRef);
+            tx.delete(followingRef);
+
+            const targetFollowersCount =
+                (targetSnap.data()?.followersCount as number) || 0;
+            const currentFollowingCount =
+                (currentSnap.data()?.followingCount as number) || 0;
+
+            tx.update(targetRef, {
+                followersCount: Math.max(0, targetFollowersCount - 1),
+            });
+            tx.update(currentRef, {
+                followingCount: Math.max(0, currentFollowingCount - 1),
+            });
+        });
+
+        return true;
+    } catch (err) {
+        console.error("removeFollower error:", err);
+        return false;
     }
 }
 
@@ -480,4 +587,30 @@ export async function getFollowing(userId: string) {
               id: doc.id,
               ...doc.data(),
           })) as IFollowing[]);
+}
+
+export async function getIsFollower(userId: string, targetUserId: string) {
+    try {
+        const followerSnap = await getDoc(
+            doc(db, "users", targetUserId, "followers", userId),
+        );
+        if (followerSnap.exists()) return true;
+        else return false;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
+}
+
+export async function getIsFollowing(userId: string, targetUserId: string) {
+    try {
+        const followingSnap = await getDoc(
+            doc(db, "users", targetUserId, "following", userId),
+        );
+        if (followingSnap.exists()) return true;
+        else return false;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
 }

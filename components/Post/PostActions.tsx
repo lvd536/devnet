@@ -21,35 +21,64 @@ export default function PostActions({
     onComment,
 }: IProps) {
     const [isLiked, setIsLiked] = useState<boolean>(false);
+    const [pending, setPending] = useState<boolean>(false);
     const userId = auth.currentUser?.uid;
 
     useEffect(() => {
-        if (userId) getIsLiked(postId, userId).then((resp) => setIsLiked(resp));
+        let mounted = true;
+        if (!userId || !postId) return;
+
+        (async () => {
+            try {
+                const resp = await getIsLiked(postId, userId);
+                if (!mounted) return;
+                setIsLiked(!!resp);
+            } catch (err) {
+                console.error("Failed to get liked status", err);
+            }
+        })();
+
+        return () => {
+            mounted = false;
+        };
     }, [postId, userId]);
 
-    useEffect(() => {
+    const handleToggleLike = async () => {
         if (!userId) return;
-        const unsubscribe = setTimeout(() => {
-            if (isLiked) addLike(postId, userId).catch(() => setIsLiked(false));
-            if (!isLiked)
-                deleteLike(postId, userId).catch(() => setIsLiked(true));
-        }, 200);
-        return () => clearTimeout(unsubscribe);
-    }, [isLiked, postId, userId]);
+        if (pending) return;
+
+        const newState = !isLiked;
+        setIsLiked(newState);
+        setPending(true);
+
+        try {
+            if (newState) await addLike(postId, userId);
+            else await deleteLike(postId, userId);
+        } catch (err) {
+            console.error("Like toggle failed:", err);
+            setIsLiked(!newState);
+        } finally {
+            setPending(false);
+        }
+    };
 
     if (!userId) return null;
 
     return (
         <div className="flex items-center gap-4 mt-2">
             <div
-                className="flex items-center gap-2"
-                onClick={() => setIsLiked((prev) => !prev)}
+                className="flex items-center gap-2 cursor-pointer select-none"
+                onClick={handleToggleLike}
+                aria-hidden
             >
                 <Heart
-                    className={`w-5 h-5 text-text-muted fill-amber-50/0 ${isLiked && "fill-red-500 stroke-red-500"} transition-all duration-300`}
+                    className={`w-5 h-5 text-text-muted fill-amber-50/0 ${
+                        isLiked && "fill-red-500 stroke-red-500"
+                    } transition-all duration-300`}
                 />
                 <span className="text-sm text-text-muted">{likesCount}</span>
             </div>
+
             {commentLink ? (
                 <Link
                     href={commentLink}

@@ -9,6 +9,7 @@ import {
 import {
     addDoc,
     collection,
+    deleteDoc,
     doc,
     getDoc,
     getDocs,
@@ -290,4 +291,91 @@ export async function getPost(postId: string) {
     const postSnap = await getDoc(postRef);
     if (!postSnap.exists) return undefined;
     return { id: postSnap.id, ...postSnap.data() } as IPost;
+}
+
+export async function addLike(postId: string, userId: string) {
+    try {
+        await setDoc(doc(db, "posts", postId, "likes", userId), {
+            createdAt: Date.now(),
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function deleteLike(postId: string, userId: string) {
+    try {
+        const likeRef = doc(db, "posts", postId, "likes", userId);
+        await deleteDoc(likeRef);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function getLikes(postId: string) {
+    const likes = await getDocs(collection(db, "posts", postId, "likes"));
+
+    return likes.empty ? undefined : likes.docs;
+}
+
+export async function addComment(
+    userId: string,
+    postId: string,
+    message: string,
+) {
+    try {
+        await addDoc(collection(db, "posts", postId, "comments"), {
+            authorId: userId,
+            content: message,
+            createdAt: Date.now(),
+        });
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function deleteComment(postId: string, commentId: string) {
+    try {
+        await deleteDoc(doc(db, "posts", postId, "comments", commentId));
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function getComments(postId: string) {
+    const comment = await getDocs(collection(db, "posts", postId, "comments"));
+
+    return comment.empty ? undefined : comment.docs;
+}
+
+export async function addFollower(targetUserId: string, currentUserId: string) {
+    try {
+        await setDoc(
+            doc(db, "users", targetUserId, "followers", currentUserId),
+            { createdAt: Date.now() },
+        );
+
+        await setDoc(
+            doc(db, "users", currentUserId, "following", targetUserId),
+            { createdAt: Date.now() },
+        );
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function getFollowers(userId: string) {
+    const followers = await getDocs(
+        collection(db, "users", userId, "followers"),
+    );
+
+    return followers.empty ? undefined : followers.docs;
+}
+
+export async function getFollowing(userId: string) {
+    const following = await getDocs(
+        collection(db, "users", userId, "following"),
+    );
+
+    return following.empty ? undefined : following.docs;
 }

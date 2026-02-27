@@ -30,7 +30,7 @@ export default function PostCommentInput({ postId }: IProps) {
     if (!userId) return null;
 
     return (
-        <div className="w-full h-50 border-t border-t-border mt-4 p-2 pt-4">
+        <div className="w-full border-t border-t-border mt-4 p-2 pt-4">
             <div className="flex gap-1">
                 <textarea
                     maxLength={2500}

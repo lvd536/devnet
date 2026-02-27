@@ -19,10 +19,10 @@ export default function ProfileAvatar({
                     alt="user avatar"
                     width={80}
                     height={80}
-                    className="rounded-full ring-8 ring-background"
+                    className="w-20 h-20 rounded-full ring-8 ring-background"
                 />
             ) : (
-                <div className="flex items-center justify-center w-20 h-20 rounded-full ring-8 ring-background">
+                <div className="flex items-center justify-center min-w-20 min-h-20 max-w-20 max-h-20 rounded-full ring-8 ring-background">
                     {githubUsername
                         ? githubUsername[0].toUpperCase()
                         : username[0].toUpperCase()}

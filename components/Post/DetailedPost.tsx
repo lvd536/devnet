@@ -5,7 +5,7 @@ import PostCredits from "./PostCredits";
 import PostAvatar from "./PostAvatar";
 import { useParams, useRouter } from "next/navigation";
 import usePost from "@/hooks/usePost";
-import PostComments from "./PostComments";
+import PostCommentInput from "./PostCommentInput";
 
 export default function DetailedPost() {
     const { id: postId } = useParams<{ id: string }>();
@@ -50,7 +50,7 @@ export default function DetailedPost() {
                             <span className="text-sm text-text-muted">0</span>
                         </div>
                     </div>
-                    <PostComments />
+                    <PostCommentInput postId={post.id} />
                 </div>
             </div>
         </div>

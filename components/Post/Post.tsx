@@ -1,8 +1,7 @@
 import { IPost } from "@/interfaces/interfaces";
 import Repository from "../Repository";
 import usePostData from "@/hooks/usePostData";
-import { Heart, MessageSquareMore } from "lucide-react";
-import Link from "next/link";
+
 import { browserRoutes } from "@/consts/browserRoutes";
 import PostCredits from "./PostCredits";
 import PostAvatar from "./PostAvatar";
@@ -40,6 +39,7 @@ export default function Post({ post }: IProps) {
                     commentsCount={post.commentsCount}
                     likesCount={post.likesCount}
                     commentLink={browserRoutes.post.link(post.id)}
+                    postId={post.id}
                 />
             </div>
         </div>

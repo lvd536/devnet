@@ -1,6 +1,6 @@
 "use client";
 import Repository from "../Repository";
-import { Heart, MessageSquareMore, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import PostCredits from "./PostCredits";
 import PostAvatar from "./PostAvatar";
 import { useParams, useRouter } from "next/navigation";
@@ -45,6 +45,7 @@ export default function DetailedPost() {
                     <PostActions
                         commentsCount={post.commentsCount}
                         likesCount={post.likesCount}
+                        postId={post.id}
                     />
                     <PostCommentInput postId={post.id} />
                     <CommentList postId={post.id} />

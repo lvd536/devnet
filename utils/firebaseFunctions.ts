@@ -9,7 +9,6 @@ import {
 import {
     addDoc,
     collection,
-    deleteDoc,
     doc,
     getDoc,
     getDocs,
@@ -358,6 +357,19 @@ export async function getLikes(postId: string) {
               id: doc.id,
               ...doc.data(),
           })) as ILike[]);
+}
+
+export async function getIsLiked(postId: string, userId: string) {
+    try {
+        const likeSnap = await getDoc(
+            doc(db, "posts", postId, "likes", userId),
+        );
+        if (likeSnap.exists()) return true;
+        else return false;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
 }
 
 export async function addComment(

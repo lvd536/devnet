@@ -54,3 +54,58 @@ export interface IPost {
 
     createdAt: number;
 }
+
+export interface ILike {
+    id: string; // userId
+    createdAt: number;
+}
+
+export interface IComment {
+    id: string;
+
+    authorId: string;
+    content: string;
+
+    createdAt: number;
+}
+
+export interface IFollower {
+    id: string; // follower uid
+    createdAt: number;
+}
+
+export interface IFollowing {
+    id: string; // followed user uid
+    createdAt: number;
+}
+
+export interface IUserBadge {
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+    awardedAt: number;
+}
+
+export type NotificationType = "like" | "comment" | "follow" | "badge";
+
+export interface INotification {
+    id: string;
+    type: NotificationType;
+
+    fromUserId: string;
+    postId?: string;
+
+    isRead: boolean;
+    createdAt: number;
+}
+
+export interface IBadge {
+    id: string;
+
+    title: string;
+    description: string;
+    icon: string;
+
+    condition: string;
+}

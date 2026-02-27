@@ -22,7 +22,11 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import {
+    IComment,
+    IFollower,
+    IFollowing,
     IGitHubRepo,
+    ILike,
     IPost,
     IProject,
     IUserProfile,
@@ -348,7 +352,12 @@ export async function getLikes(postId: string) {
     const likesSnapshot = await getDocs(
         collection(db, "posts", postId, "likes"),
     );
-    return likesSnapshot.empty ? undefined : likesSnapshot.docs;
+    return likesSnapshot.empty
+        ? undefined
+        : (likesSnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+          })) as ILike[]);
 }
 
 export async function addComment(
@@ -411,7 +420,12 @@ export async function getComments(postId: string) {
     const commentSnap = await getDocs(
         collection(db, "posts", postId, "comments"),
     );
-    return commentSnap.empty ? undefined : commentSnap.docs;
+    return commentSnap.empty
+        ? undefined
+        : (commentSnap.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+          })) as IComment[]);
 }
 
 export async function addFollower(targetUserId: string, currentUserId: string) {
@@ -435,7 +449,12 @@ export async function getFollowers(userId: string) {
         collection(db, "users", userId, "followers"),
     );
 
-    return followers.empty ? undefined : followers.docs;
+    return followers.empty
+        ? undefined
+        : (followers.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+          })) as IFollower[]);
 }
 
 export async function getFollowing(userId: string) {
@@ -443,5 +462,10 @@ export async function getFollowing(userId: string) {
         collection(db, "users", userId, "following"),
     );
 
-    return following.empty ? undefined : following.docs;
+    return following.empty
+        ? undefined
+        : (following.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+          })) as IFollowing[]);
 }

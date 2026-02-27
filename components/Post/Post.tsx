@@ -6,6 +6,7 @@ import Link from "next/link";
 import { browserRoutes } from "@/consts/browserRoutes";
 import PostCredits from "./PostCredits";
 import PostAvatar from "./PostAvatar";
+import PostActions from "./PostActions";
 
 interface IProps {
     post: IPost;
@@ -35,19 +36,11 @@ export default function Post({ post }: IProps) {
                 {project && (
                     <Repository repo={project} className="bg-background" />
                 )}
-                <div className="flex items-center gap-4 mt-2">
-                    <div className="flex items-center gap-2">
-                        <Heart className="w-5 h-5 text-text-muted" />
-                        <span className="text-sm text-text-muted">0</span>
-                    </div>
-                    <Link
-                        href={browserRoutes.post.link(post.id)}
-                        className="flex items-center gap-2"
-                    >
-                        <MessageSquareMore className="w-5 h-5 text-text-muted" />
-                        <span className="text-sm text-text-muted">0</span>
-                    </Link>
-                </div>
+                <PostActions
+                    commentsCount={post.commentsCount}
+                    likesCount={post.likesCount}
+                    commentLink={browserRoutes.post.link(post.id)}
+                />
             </div>
         </div>
     );

@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import usePost from "@/hooks/usePost";
 import PostCommentInput from "./PostCommentInput";
 import CommentList from "./CommentList";
+import PostActions from "./PostActions";
 
 export default function DetailedPost() {
     const { id: postId } = useParams<{ id: string }>();
@@ -41,20 +42,10 @@ export default function DetailedPost() {
                     {project && (
                         <Repository repo={project} className="bg-background" />
                     )}
-                    <div className="flex items-center gap-4 mt-2">
-                        <div className="flex items-center gap-2">
-                            <Heart className="w-5 h-5 text-text-muted" />
-                            <span className="text-sm text-text-muted">
-                                {post.likesCount}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <MessageSquareMore className="w-5 h-5 text-text-muted" />
-                            <span className="text-sm text-text-muted">
-                                {post.commentsCount}
-                            </span>
-                        </div>
-                    </div>
+                    <PostActions
+                        commentsCount={post.commentsCount}
+                        likesCount={post.likesCount}
+                    />
                     <PostCommentInput postId={post.id} />
                     <CommentList postId={post.id} />
                 </div>

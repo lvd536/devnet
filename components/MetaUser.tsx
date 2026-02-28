@@ -14,7 +14,7 @@ export default function MetaUser({ user }: IProps) {
     if (!id || !currentUserId) return null;
 
     return (
-        <div className="flex mt-2 w-full items-center justify-between px-4">
+        <div className="flex mt-4 w-full items-center justify-between px-4">
             <div className="flex gap-2">
                 <PostAvatar
                     avatarUrl={avatarUrl}

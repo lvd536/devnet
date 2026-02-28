@@ -22,7 +22,7 @@ export default function ProfileAvatar({
                     className="w-20 h-20 rounded-full ring-8 ring-background"
                 />
             ) : (
-                <div className="flex items-center justify-center min-w-20 min-h-20 max-w-20 max-h-20 rounded-full ring-8 ring-background">
+                <div className="flex items-center justify-center min-w-20 min-h-20 max-w-20 max-h-20 rounded-full ring-8 ring-background bg-card text-2xl">
                     {githubUsername
                         ? githubUsername[0].toUpperCase()
                         : username[0].toUpperCase()}

@@ -9,7 +9,7 @@ export const browserRoutes = {
     },
     user: {
         name: "User profile",
-        link: (uid: string) => `/user/${uid}`,
+        link: (uid: string) => `/${uid}`,
     },
     auth: {
         login: {

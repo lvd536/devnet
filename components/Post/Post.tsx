@@ -24,12 +24,14 @@ export default function Post({ post }: IProps) {
                 username={user.username}
                 githubUsername={user.githubUsername}
                 avatarUrl={user.avatarUrl}
+                userId={user.id!}
             />
             <div className="flex w-full flex-col gap-1">
                 <PostCredits
                     username={user.username}
                     githubUsername={user.githubUsername}
                     createdAt={post.createdAt}
+                    userId={user.id!}
                 />
                 {post.content && <p>{post.content}</p>}
                 {project && (

@@ -109,3 +109,12 @@ export interface IBadge {
 
     condition: string;
 }
+
+export interface IUserSummary {
+    id: string;
+    username: string;
+    githubUsername: string | null;
+    avatarUrl: string | null;
+    createdAt?: number | null;
+    isFollowing?: boolean;
+}

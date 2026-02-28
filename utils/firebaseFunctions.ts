@@ -18,6 +18,9 @@ import {
     setDoc,
     updateDoc,
     where,
+    limit,
+    orderBy,
+    documentId,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import {
@@ -29,6 +32,7 @@ import {
     IPost,
     IProject,
     IUserProfile,
+    IUserSummary,
 } from "@/interfaces/interfaces";
 import { setUserData, useUserProfileStore } from "@/stores/useProfileStore";
 
@@ -612,5 +616,210 @@ export async function getIsFollowing(userId: string, targetUserId: string) {
     } catch (err) {
         console.error(err);
         return false;
+    }
+}
+
+async function fetchUsersByIds(
+    ids: string[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<Record<string, any | undefined>> {
+    if (!ids || ids.length === 0) return {};
+
+    const CHUNK_SIZE = 10;
+    const chunks: string[][] = [];
+    for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+        chunks.push(ids.slice(i, i + CHUNK_SIZE));
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const resultMap: Record<string, any | undefined> = {};
+
+    for (const chunkIds of chunks) {
+        const q = query(
+            collection(db, "users"),
+            where(documentId(), "in", chunkIds),
+        );
+        const snap = await getDocs(q);
+        snap.docs.forEach((d) => {
+            resultMap[d.id] = d.data();
+        });
+
+        for (const id of chunkIds) {
+            if (!(id in resultMap)) resultMap[id] = undefined;
+        }
+    }
+
+    return resultMap;
+}
+
+export async function getFollowersLimited(
+    userId?: string,
+    currentUserId?: string,
+    pageSize = 20,
+): Promise<IUserSummary[] | undefined> {
+    if (!userId) {
+        console.warn("getFollowersLimited: userId is undefined");
+        return undefined;
+    }
+
+    try {
+        const colRef = collection(db, "users", userId, "followers");
+
+        let snap;
+        try {
+            const q = query(
+                colRef,
+                orderBy("createdAt", "desc"),
+                limit(pageSize),
+            );
+            snap = await getDocs(q);
+        } catch (err) {
+            console.warn(
+                "getFollowersLimited: orderBy(createdAt) failed, falling back to unsorted getDocs",
+                err,
+            );
+            snap = await getDocs(colRef);
+        }
+
+        if (!snap || snap.empty) return undefined;
+
+        const base = snap.docs.slice(0, pageSize).map((d) => {
+            return {
+                id: d.id,
+                createdAt: d.data().createdAt,
+            } as IFollower;
+        });
+
+        const ids = base.map((b) => b.id);
+        const usersMap = await fetchUsersByIds(ids);
+
+        if (!currentUserId) {
+            return base.map((b) => {
+                const userDoc = usersMap[b.id];
+                return {
+                    id: b.id,
+                    username: userDoc?.username ?? null,
+                    githubUsername: userDoc?.githubUsername ?? null,
+                    avatarUrl: userDoc?.avatarUrl ?? null,
+                    createdAt: b.createdAt,
+                } as IUserSummary;
+            });
+        }
+
+        const withState = await Promise.all(
+            base.map(async (b) => {
+                let isFollowing = false;
+                try {
+                    isFollowing = !!(await getIsFollower(currentUserId, b.id));
+                } catch (err) {
+                    console.warn(
+                        "getFollowersLimited: getIsFollower failed for",
+                        b.id,
+                        err,
+                    );
+                    isFollowing = false;
+                }
+                const userDoc = usersMap[b.id];
+                return {
+                    id: b.id,
+                    username: userDoc?.username ?? null,
+                    githubUsername: userDoc?.githubUsername ?? null,
+                    avatarUrl: userDoc?.avatarUrl ?? null,
+                    createdAt: b.createdAt,
+                    isFollowing,
+                } as IUserSummary;
+            }),
+        );
+
+        return withState;
+    } catch (err) {
+        console.error("getFollowersLimited error:", err);
+        return undefined;
+    }
+}
+
+export async function getFollowingLimited(
+    userId?: string,
+    currentUserId?: string,
+    pageSize = 20,
+): Promise<IUserSummary[] | undefined> {
+    if (!userId) {
+        console.warn("getFollowingLimited: userId is undefined");
+        return undefined;
+    }
+
+    try {
+        const colRef = collection(db, "users", userId, "following");
+
+        let snap;
+        try {
+            const q = query(
+                colRef,
+                orderBy("createdAt", "desc"),
+                limit(pageSize),
+            );
+            snap = await getDocs(q);
+        } catch (err) {
+            console.warn(
+                "getFollowingLimited: orderBy(createdAt) failed, falling back to unsorted getDocs",
+                err,
+            );
+            snap = await getDocs(colRef);
+        }
+
+        if (!snap || snap.empty) return undefined;
+
+        const base = snap.docs.slice(0, pageSize).map((d) => {
+            return {
+                id: d.id,
+                createdAt: d.data().createdAt,
+            } as IFollowing;
+        });
+
+        const ids = base.map((b) => b.id);
+        const usersMap = await fetchUsersByIds(ids);
+
+        if (!currentUserId) {
+            return base.map((b) => {
+                const userDoc = usersMap[b.id];
+                return {
+                    id: b.id,
+                    username: userDoc?.username ?? null,
+                    githubUsername: userDoc?.githubUsername ?? null,
+                    avatarUrl: userDoc?.avatarUrl ?? null,
+                    createdAt: b.createdAt,
+                } as IUserSummary;
+            });
+        }
+
+        const withState = await Promise.all(
+            base.map(async (b) => {
+                let isFollowing = false;
+                try {
+                    isFollowing = !!(await getIsFollower(currentUserId, b.id));
+                } catch (err) {
+                    console.warn(
+                        "getFollowingLimited: getIsFollower failed for",
+                        b.id,
+                        err,
+                    );
+                    isFollowing = false;
+                }
+                const userDoc = usersMap[b.id];
+                return {
+                    id: b.id,
+                    username: userDoc?.username ?? null,
+                    githubUsername: userDoc?.githubUsername ?? null,
+                    avatarUrl: userDoc?.avatarUrl ?? null,
+                    createdAt: b.createdAt,
+                    isFollowing,
+                } as IUserSummary;
+            }),
+        );
+
+        return withState;
+    } catch (err) {
+        console.error("getFollowingLimited error:", err);
+        return undefined;
     }
 }

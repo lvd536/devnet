@@ -35,6 +35,7 @@ export default function DProfileHeader() {
                 followersCount={userProfile.followersCount}
                 followingCount={userProfile.followingCount}
                 registerDate={date}
+                targetUserId={userProfile.id!}
             />
         </>
     );

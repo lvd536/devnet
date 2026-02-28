@@ -6,8 +6,8 @@ import ProfileCredits from "./ProfileCredits";
 import ProfileAvatar from "./ProfileAvatar";
 
 export default function ProfileHeader() {
-    const { profile } = useUserProfileStore();
-    if (!profile) return null;
+    const { profile, user } = useUserProfileStore();
+    if (!profile || !user) return null;
 
     const date = (profile.createdAt as Timestamp).toDate();
 
@@ -30,6 +30,7 @@ export default function ProfileHeader() {
                 followersCount={profile.followersCount}
                 followingCount={profile.followingCount}
                 registerDate={date}
+                targetUserId={user.uid}
             />
         </>
     );

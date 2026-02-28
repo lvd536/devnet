@@ -12,7 +12,6 @@ export default function MetaUser({ user }: IProps) {
     const currentUserId = auth.currentUser?.uid;
 
     if (!id || !currentUserId) return null;
-    if (id === currentUserId) return null;
 
     return (
         <div className="flex mt-2 w-full items-center justify-between px-4">
@@ -32,7 +31,9 @@ export default function MetaUser({ user }: IProps) {
                     )}
                 </div>
             </div>
-            <FollowBtn currentUserId={currentUserId} userId={id} />
+            {id !== currentUserId && (
+                <FollowBtn currentUserId={currentUserId} userId={id} />
+            )}
         </div>
     );
 }

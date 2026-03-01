@@ -12,7 +12,7 @@ export default function ProfileNavigation({
     return (
         <div className="flex relative items-center justify-center w-full h-12 mt-4 bg-border-light/80 rounded-full">
             <p
-                className={`flex flex-col gap-1 items-center justify-center w-1/4 lg:w-9/10 lg:h-1/4 cursor-pointer transition-text duration-300 z-10 ${
+                className={`flex flex-col gap-1 items-center justify-center w-1/2 h-1/4 cursor-pointer transition-text duration-300 z-10 ${
                     currentPage === "posts" ? "text-text" : "text-text-muted"
                 } max-lg:text-text`}
                 onClick={() => setCurrentPage("posts")}
@@ -20,7 +20,7 @@ export default function ProfileNavigation({
                 Посты
             </p>
             <p
-                className={`flex flex-col gap-1 items-center justify-center w-1/4 lg:w-9/10 lg:h-1/4 cursor-pointer transition-text duration-300 z-10 ${
+                className={`flex flex-col gap-1 items-center justify-center w-1/2 h-1/4 cursor-pointer transition-text duration-300 z-10 ${
                     currentPage === "likes" ? "text-text" : "text-text-muted"
                 } max-lg:text-text`}
                 onClick={() => setCurrentPage("likes")}

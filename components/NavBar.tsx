@@ -32,7 +32,7 @@ export default function NavBar() {
     }, [pathname]);
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center z-99">
             <Image
                 src={logo}
                 alt="logo icon"

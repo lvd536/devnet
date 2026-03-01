@@ -8,7 +8,7 @@ interface IProps {
 export default function CommentList({ postId }: IProps) {
     const { comments, loading, error } = usePostComments(postId);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div>Загрузка...</div>;
 
     if (error) return null;
 

@@ -27,7 +27,7 @@ export default function ProfileMeta({
     const [isFollowingsModalOpen, setIsFollowingsModalOpen] =
         useState<boolean>(false);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div>Загрузка...</div>;
 
     return (
         <>

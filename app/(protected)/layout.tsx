@@ -34,7 +34,7 @@ export default function ProtectedLayout({
         return () => unsubscribe();
     }, [router]);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div>Загрузка...</div>;
 
     if (!authorized) return null;
 

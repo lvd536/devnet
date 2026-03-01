@@ -9,8 +9,8 @@ export default function ProfileLikes() {
         userId: userId ?? auth.currentUser!.uid,
     });
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (loading) return <div>Загрузка...</div>;
+    if (error) return <div>{error}</div>;
     if (!likedPosts || likedPosts.length < 1)
         return (
             <div className="text-center text-lg mt-2 text-text-muted">

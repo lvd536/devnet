@@ -11,7 +11,7 @@ interface IProps {
 export default function Comment({ comment }: IProps) {
     const { userProfile, loading, error } = useUserProfile(comment.authorId);
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div>Загрузка...</div>;
 
     if (!userProfile || error) return null;
 

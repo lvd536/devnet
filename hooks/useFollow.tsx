@@ -1,7 +1,6 @@
 "use client";
 
 import { browserRoutes } from "@/consts/browserRoutes";
-import { auth } from "@/lib/firebase";
 import {
     addFollower,
     getIsFollower,

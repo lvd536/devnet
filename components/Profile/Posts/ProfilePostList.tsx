@@ -9,8 +9,8 @@ export default function ProfilePostList() {
         userId: userId ?? auth.currentUser!.uid,
     });
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (loading) return <div>Загрузка...</div>;
+    if (error) return <div>{error}</div>;
     if (!posts) return <div>Постов нет</div>;
 
     return (

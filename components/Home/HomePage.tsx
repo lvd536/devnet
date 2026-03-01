@@ -13,8 +13,8 @@ export default function HomePage() {
     >("recomendations");
     const { loading, posts, followingPosts, error } = useHomePosts();
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (loading) return <div>Загрузка...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="flex flex-col gap-2">

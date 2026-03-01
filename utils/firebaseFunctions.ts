@@ -22,6 +22,10 @@ import {
     orderBy,
     documentId,
     collectionGroup,
+    or,
+    startAfter,
+    DocumentSnapshot,
+    QuerySnapshot,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import {
@@ -881,6 +885,53 @@ export async function getFollowingIds(userId: string) {
     if (!snap || snap.empty) return undefined;
 
     return snap.docs.map((d) => {
-        return d.id
+        return d.id;
     });
+}
+
+export async function searchUsers(
+    searchQuery: string,
+    pageSize = 20,
+    chunkSize = 500,
+): Promise<IUserProfile[]> {
+    if (!searchQuery) return [];
+
+    const qStr = searchQuery.toLowerCase();
+    const usersRef = collection(db, "users");
+
+    let lastDoc: DocumentSnapshot | null = null;
+    const found: IUserProfile[] = [];
+
+    while (found.length < pageSize) {
+        const q = lastDoc
+            ? query(
+                  usersRef,
+                  orderBy("createdAt"),
+                  startAfter(lastDoc),
+                  limit(chunkSize),
+              )
+            : query(usersRef, orderBy("createdAt"), limit(chunkSize));
+
+        const snap: QuerySnapshot = await getDocs(q);
+
+        if (snap.empty) break;
+
+        for (const docSnap of snap.docs) {
+            const data = docSnap.data();
+            const username = (data.username ?? "").toString().toLowerCase();
+            const github = (data.githubUsername ?? "").toString().toLowerCase();
+
+            if (username.includes(qStr) || github.includes(qStr)) {
+                found.push({ id: docSnap.id, ...data } as IUserProfile);
+                if (found.length >= pageSize) break;
+            }
+        }
+
+        if (found.length >= pageSize) break;
+        if (snap.docs.length < chunkSize) break;
+
+        lastDoc = snap.docs[snap.docs.length - 1];
+    }
+
+    return found;
 }

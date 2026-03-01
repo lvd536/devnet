@@ -1,12 +1,13 @@
-import useAllPosts from "@/hooks/useAllPosts";
+import { IPost } from "@/interfaces/interfaces";
 import Post from "../Post/Post";
 
-export default function HomePostList() {
-    const { loading, posts, error } = useAllPosts();
+interface IProps {
+    posts: IPost[] | undefined;
+}
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-    if (!posts) return <div>Постов нет</div>;
+export default function HomePostList({ posts }: IProps) {
+    if (!posts || posts.length < 1) return <div>Постов нет</div>;
+
     return (
         <div className="flex w-full flex-col gap-2 mt-2">
             {posts.map((post) => (

@@ -862,3 +862,25 @@ export async function getLikedPosts(userId: string) {
 
     return posts.filter(isPost);
 }
+
+export async function getFollowingIds(userId: string) {
+    const colRef = collection(db, "users", userId, "following");
+
+    let snap;
+    try {
+        const q = query(colRef, orderBy("createdAt", "desc"));
+        snap = await getDocs(q);
+    } catch (err) {
+        console.warn(
+            "getFollowingLimited: orderBy(createdAt) failed, falling back to unsorted getDocs",
+            err,
+        );
+        snap = await getDocs(colRef);
+    }
+
+    if (!snap || snap.empty) return undefined;
+
+    return snap.docs.map((d) => {
+        return d.id
+    });
+}

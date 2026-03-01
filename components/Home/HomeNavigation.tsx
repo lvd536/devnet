@@ -14,7 +14,7 @@ export default function HomeNavigation({
     return (
         <div className="flex relative items-center justify-center w-full h-12 mt-4 bg-border-light/80 rounded-full">
             <p
-                className={`flex flex-col gap-1 items-center justify-center w-1/4 lg:w-9/10 lg:h-1/4 cursor-pointer transition-text duration-300 z-10 ${
+                className={`flex flex-col gap-1 items-center justify-center w-1/2 h-1/4 cursor-pointer transition-text duration-300 z-10 ${
                     currentPage === "recomendations"
                         ? "text-text"
                         : "text-text-muted"
@@ -24,7 +24,7 @@ export default function HomeNavigation({
                 Для вас
             </p>
             <p
-                className={`flex flex-col gap-1 items-center justify-center w-1/4 lg:w-9/10 lg:h-1/4 cursor-pointer transition-text duration-300 z-10 ${
+                className={`flex flex-col gap-1 items-center justify-center w-1/2 h-1/4 cursor-pointer transition-text duration-300 z-10 ${
                     currentPage === "following"
                         ? "text-text"
                         : "text-text-muted"

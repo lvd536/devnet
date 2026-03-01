@@ -7,7 +7,6 @@ import ProfileLikes from "./Posts/ProfileLikes";
 
 export default function ProfileBody() {
     const [currentPage, setCurrentPage] = useState<"posts" | "likes">("posts");
-
     return (
         <>
             <ProfileNavigation

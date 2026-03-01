@@ -3,15 +3,10 @@ import Post from "@/components/Post/Post";
 import useProfilePosts from "@/hooks/useProfilePosts";
 import { auth } from "@/lib/firebase";
 import { useParams } from "next/navigation";
-
-interface IProps {
-    isOtherUser?: boolean;
-}
-
-export default function ProfilePostList({ isOtherUser }: IProps) {
+export default function ProfilePostList() {
     const { userId } = useParams<{ userId: string }>();
     const { loading, posts, error } = useProfilePosts({
-        userId: isOtherUser ? userId : auth.currentUser!.uid,
+        userId: userId ?? auth.currentUser!.uid,
     });
 
     if (loading) return <div>Loading...</div>;

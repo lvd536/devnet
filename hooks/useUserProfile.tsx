@@ -10,6 +10,10 @@ export default function useUserProfile(userId: string) {
     const [error, setError] = useState<string | undefined>(undefined);
 
     useEffect(() => {
+        if (!userId) {
+            setTimeout(() => setLoading(false));
+            return;
+        }
         getUserData(userId)
             .then((data) => {
                 setUserProfile(data);

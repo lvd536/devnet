@@ -21,6 +21,7 @@ import {
     limit,
     orderBy,
     documentId,
+    collectionGroup,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import {
@@ -822,4 +823,42 @@ export async function getFollowingLimited(
         console.error("getFollowingLimited error:", err);
         return undefined;
     }
+}
+
+async function getPostsLikedByUser(userId: string) {
+    if (!userId) return [];
+
+    const q = query(
+        collectionGroup(db, "likes"),
+        where("userId", "==", userId),
+    );
+
+    const snap = await getDocs(q);
+
+    return snap.docs
+        .map((doc) => {
+            const postId = doc.ref.parent.parent?.id;
+            return postId;
+        })
+        .filter(Boolean);
+}
+
+function isPost(post: IPost | null): post is IPost {
+    return post !== null;
+}
+
+export async function getLikedPosts(userId: string) {
+    const postIds = await getPostsLikedByUser(userId);
+
+    const posts = await Promise.all(
+        postIds.map(async (postId) => {
+            if (!postId) return null;
+            const snap = await getDoc(doc(db, "posts", postId));
+            return snap.exists()
+                ? ({ id: snap.id, ...snap.data() } as IPost)
+                : null;
+        }),
+    );
+
+    return posts.filter(isPost);
 }

@@ -2,15 +2,34 @@
 
 import { NAV_ITEMS } from "@/consts/navItems";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import logo from "@/public/logo.svg";
+import { usePathname } from "next/navigation";
+import { browserRoutes } from "@/consts/browserRoutes";
 
 export default function NavBar() {
     const [currentPage, setCurrentPage] = useState<number>(0);
-
+    const pathname = usePathname();
     const leftPosition = currentPage * 25;
     const topPosition = currentPage * 25 + 12;
+
+    useEffect(() => {
+        switch (pathname) {
+            case browserRoutes.home.link:
+                setTimeout(() => setCurrentPage(0));
+                break;
+            case browserRoutes.explore.link:
+                setTimeout(() => setCurrentPage(1));
+                break;
+            case browserRoutes.notifications.link:
+                setTimeout(() => setCurrentPage(2));
+                break;
+            case browserRoutes.profile.link:
+                setTimeout(() => setCurrentPage(3));
+                break;
+        }
+    }, [pathname]);
 
     return (
         <div className="flex flex-col items-center">
@@ -32,7 +51,6 @@ export default function NavBar() {
                                     ? "text-card"
                                     : "text-text-muted"
                             } max-lg:text-text`}
-                            onClick={() => setCurrentPage(index)}
                         >
                             <item.Icon />
                             <h1

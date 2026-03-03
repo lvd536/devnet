@@ -6,13 +6,21 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import logo from "@/public/logo.svg";
 import { usePathname } from "next/navigation";
+import { useUserProfileStore } from "@/stores/useProfileStore";
+import { browserRoutes } from "@/consts/browserRoutes";
 
 export default function NavBar() {
     const [currentPage, setCurrentPage] = useState<number>(0);
+    const { profile } = useUserProfileStore();
+    const isAdmin = profile
+        ? [profile.role, ...(profile.roles ?? [])].some((role) =>
+              role.permissions.some((perm) => perm.toLowerCase() === "admin"),
+          )
+        : false;
     const pathname = usePathname();
-    const tabsCount = NAV_ITEMS.length;
-    const step = 100 / tabsCount;
 
+    const tabsCount = isAdmin ? NAV_ITEMS.length : NAV_ITEMS.length - 1;
+    const step = 100 / tabsCount;
     const leftPosition = currentPage * step;
     const topPosition = (currentPage + 0.5) * step;
 
@@ -32,24 +40,28 @@ export default function NavBar() {
             />
             <div className="flex items-center justify-center max-lg:fixed max-lg:inset-x-0 max-lg:mx-auto bg-background bottom-4 left-0 w-[calc(100vw-16px)] h-17 lg:h-87.5 lg:w-18.5 rounded-full ring ring-border">
                 <nav className="flex flex-1 relative items-center justify-center w-full h-full mx-2 lg:flex-col">
-                    {NAV_ITEMS.map((item, index) => (
-                        <Link
-                            href={item.link}
-                            key={index}
-                            className={`flex flex-col gap-1 items-center justify-center w-1/4 lg:w-9/10 lg:h-1/4 cursor-pointer transition-text duration-300 z-10 ${
-                                currentPage === index
-                                    ? "text-card"
-                                    : "text-text-muted"
-                            } max-lg:text-text`}
-                        >
-                            <item.Icon />
-                            <h1
-                                className={`lg:hidden text-xs ${currentPage === index && "text-blue-600"} transition-text duration-300`}
+                    {NAV_ITEMS.map((item, index) => {
+                        if (item.link === browserRoutes.admin.link && !isAdmin)
+                            return;
+                        return (
+                            <Link
+                                href={item.link}
+                                key={index}
+                                className={`flex flex-col gap-1 items-center justify-center w-1/4 lg:w-9/10 lg:h-1/4 cursor-pointer transition-text duration-300 z-10 ${
+                                    currentPage === index
+                                        ? "text-card"
+                                        : "text-text-muted"
+                                } max-lg:text-text`}
                             >
-                                {item.label}
-                            </h1>
-                        </Link>
-                    ))}
+                                <item.Icon />
+                                <h1
+                                    className={`lg:hidden text-xs ${currentPage === index && "text-blue-600"} transition-text duration-300`}
+                                >
+                                    {item.label}
+                                </h1>
+                            </Link>
+                        );
+                    })}
 
                     <div
                         style={{ left: `${leftPosition}%` }}

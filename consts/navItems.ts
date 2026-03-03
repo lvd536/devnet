@@ -1,4 +1,11 @@
-import { House, UserRound, Search, Bell, type LucideIcon } from "lucide-react";
+import {
+    House,
+    UserRound,
+    Search,
+    Bell,
+    UserStar,
+    type LucideIcon,
+} from "lucide-react";
 import { browserRoutes } from "./browserRoutes";
 
 export const NAV_ITEMS: { Icon: LucideIcon; label: string; link: string }[] = [
@@ -23,7 +30,7 @@ export const NAV_ITEMS: { Icon: LucideIcon; label: string; link: string }[] = [
         link: browserRoutes.profile.link,
     },
     {
-        Icon: UserRound,
+        Icon: UserStar,
         label: "Админ",
         link: browserRoutes.admin.link,
     },

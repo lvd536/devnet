@@ -33,7 +33,7 @@ export default function AuthLayout({
 
     return (
         <>
-            <main className="w-full lg:w-[700px] h-full">{children}</main>
+            <main className="w-full lg:w-175 h-full">{children}</main>
         </>
     );
 }

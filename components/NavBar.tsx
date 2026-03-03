@@ -6,29 +6,19 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import logo from "@/public/logo.svg";
 import { usePathname } from "next/navigation";
-import { browserRoutes } from "@/consts/browserRoutes";
 
 export default function NavBar() {
     const [currentPage, setCurrentPage] = useState<number>(0);
     const pathname = usePathname();
-    const leftPosition = currentPage * 25;
-    const topPosition = currentPage * 25 + 12;
+    const tabsCount = NAV_ITEMS.length;
+    const step = 100 / tabsCount;
+
+    const leftPosition = currentPage * step;
+    const topPosition = (currentPage + 0.5) * step;
 
     useEffect(() => {
-        switch (pathname) {
-            case browserRoutes.home.link:
-                setTimeout(() => setCurrentPage(0));
-                break;
-            case browserRoutes.explore.link:
-                setTimeout(() => setCurrentPage(1));
-                break;
-            case browserRoutes.notifications.link:
-                setTimeout(() => setCurrentPage(2));
-                break;
-            case browserRoutes.profile.link:
-                setTimeout(() => setCurrentPage(3));
-                break;
-        }
+        const findIndex = NAV_ITEMS.findIndex((i) => i.link === pathname);
+        if (findIndex !== -1) setTimeout(() => setCurrentPage(findIndex));
     }, [pathname]);
 
     return (
@@ -41,7 +31,7 @@ export default function NavBar() {
                 className="max-lg:hidden lg:mb-6"
             />
             <div className="flex items-center justify-center max-lg:fixed max-lg:inset-x-0 max-lg:mx-auto bg-background bottom-4 left-0 w-[calc(100vw-16px)] h-17 lg:h-87.5 lg:w-18.5 rounded-full ring ring-border">
-                <nav className="flex relative items-center justify-center w-full h-full mx-2 lg:flex-col">
+                <nav className="flex flex-1 relative items-center justify-center w-full h-full mx-2 lg:flex-col">
                     {NAV_ITEMS.map((item, index) => (
                         <Link
                             href={item.link}
@@ -63,7 +53,7 @@ export default function NavBar() {
 
                     <div
                         style={{ left: `${leftPosition}%` }}
-                        className="lg:hidden absolute top-1/2 -translate-y-1/2 w-1/4 h-8/10 bg-border-light rounded-full transition-all duration-300 pointer-events-none z-2"
+                        className={`lg:hidden absolute top-1/2 -translate-y-1/2 w-1/${tabsCount} h-8/10 bg-border-light rounded-full transition-all duration-300 pointer-events-none z-2`}
                     />
                     <div
                         style={{ top: `${topPosition}%` }}

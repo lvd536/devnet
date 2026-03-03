@@ -22,4 +22,9 @@ export const NAV_ITEMS: { Icon: LucideIcon; label: string; link: string }[] = [
         label: "Профиль",
         link: browserRoutes.profile.link,
     },
+    {
+        Icon: UserRound,
+        label: "Админ",
+        link: browserRoutes.admin.link,
+    },
 ] as const;

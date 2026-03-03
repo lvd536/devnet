@@ -33,4 +33,8 @@ export const browserRoutes = {
         name: "User Post",
         link: (postId: string) => `/post/${postId}`,
     },
+    admin: {
+        name: "Admin console",
+        link: "/admin",
+    },
 } as const;

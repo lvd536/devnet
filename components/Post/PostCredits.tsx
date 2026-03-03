@@ -15,7 +15,7 @@ export default function PostCredits({
     userId,
 }: IProps) {
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
             <Link
                 href={browserRoutes.user.link(userId)}
                 className="flex gap-2 items-center"
@@ -24,13 +24,10 @@ export default function PostCredits({
                     {githubUsername || username}
                 </span>
                 {githubUsername && (
-                    <span className="text-sm text-text-secondary text-muted-foreground">
-                        @{username}
-                    </span>
+                    <span className="text-sm text-text-muted">@{username}</span>
                 )}
             </Link>
-            <p className="w-1 h-1 bg-backdrop-background rounded-full" />
-            <p className="text-xs text-muted">
+            <p className="text-xs text-text/50">
                 {new Date(createdAt).toLocaleDateString("ru-RU", {
                     day: "numeric",
                     month: "long",

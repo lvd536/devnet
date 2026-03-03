@@ -5,7 +5,7 @@ interface IProps {
     setSearchValue: Dispatch<SetStateAction<string>>;
 }
 
-export default function ExploreSearchBar({
+export default function SearchBar({
     searchValue,
     setSearchValue,
 }: IProps) {

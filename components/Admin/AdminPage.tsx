@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import AdminNavigation from "./AdminNavigation";
+import AdminUsersTab from "./AdminUsersTab";
 
 export default function AdminPage() {
     const [currentPage, setCurrentPage] = useState<
@@ -15,13 +16,7 @@ export default function AdminPage() {
                 setCurrentPage={setCurrentPage}
             />
             <div className="flex flex-col gap-2 items-center justify-center">
-                {/*<PostCreation />
-                {currentPage === "following" && (
-                    <HomeFollowing posts={followingPosts} />
-                )}
-                {currentPage === "recomendations" && (
-                    <HomePostList posts={posts} />
-                )}*/}
+                {currentPage === "users" && <AdminUsersTab />}
             </div>
         </div>
     );

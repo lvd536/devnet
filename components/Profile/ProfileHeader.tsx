@@ -7,6 +7,7 @@ import ProfileAvatar from "./ProfileAvatar";
 import useUserProfile from "@/hooks/useUserProfile";
 import { useParams } from "next/navigation";
 import DProfileControls from "./Dynamic/DProfileControls";
+import ProfileExpBar from "./ProfileExpBar";
 
 export default function ProfileHeader() {
     const { userId } = useParams<{ userId: string }>();
@@ -74,18 +75,10 @@ export default function ProfileHeader() {
                 registerDate={date}
                 targetUserId={userProfile ? userProfile.id! : user.uid}
             />
-            <div className="mt-3 w-full">
-                <div className="flex justify-between text-xs text-gray-400 mb-2">
-                    <div>XP 420 / 500</div>
-                    <div>84%</div>
-                </div>
-                <div className="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
-                    <div
-                        className="h-2 rounded-full bg-linear-to-r from-purple-500 to-indigo-500"
-                        style={{ width: "84%" }}
-                    ></div>
-                </div>
-            </div>
+            <ProfileExpBar
+                level={userProfile ? userProfile.level : profile.level}
+                xp={userProfile ? userProfile.xp : profile.xp}
+            />
         </>
     );
 }

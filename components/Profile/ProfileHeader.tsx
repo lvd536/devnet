@@ -57,13 +57,13 @@ export default function ProfileHeader() {
                 username={userProfile ? userProfile.username : profile.username}
                 followersCount={
                     userProfile
-                        ? userProfile.followersCount
-                        : profile.followersCount
+                        ? userProfile.stats.followersCount
+                        : profile.stats.followersCount
                 }
                 followingCount={
                     userProfile
-                        ? userProfile.followingCount
-                        : profile.followingCount
+                        ? userProfile.stats.followingCount
+                        : profile.stats.followingCount
                 }
                 registerDate={date}
                 targetUserId={userProfile ? userProfile.id! : user.uid}

@@ -1,18 +1,29 @@
 import type { FieldValue } from "firebase/firestore";
 
 export interface IUserProfile {
-    id?: string;
+    id: string;
     username: string;
     githubUsername: string | null;
     avatarUrl: string | null;
-    bio: string;
+
     xp: number;
     level: number;
-    followersCount: number;
-    followingCount: number;
-    postsCount: number;
-    projectsCount: number;
-    lastSyncAt: null;
+
+    role: IRole; // primary role
+    roles?: IRole[]; // дополнительные
+
+    stats: {
+        postsCount: number;
+        likesReceived: number;
+        likesGiven: number;
+        commentsCount: number;
+        followersCount: number;
+        followingCount: number;
+        projectsCount: number;
+        streakDays: number;
+        lastActiveDate?: number;
+    };
+
     createdAt: FieldValue;
 }
 
@@ -79,14 +90,6 @@ export interface IFollowing {
     createdAt: number;
 }
 
-export interface IUserBadge {
-    id: string;
-    title: string;
-    description: string;
-    icon: string;
-    awardedAt: number;
-}
-
 export type NotificationType = "like" | "comment" | "follow" | "badge";
 
 export interface INotification {
@@ -100,14 +103,34 @@ export interface INotification {
     createdAt: number;
 }
 
+export interface IUserBadge {
+    awardedAt: number;
+    awardedBy: "system" | string;
+}
+
 export interface IBadge {
     id: string;
-
     title: string;
     description: string;
-    icon: string;
 
-    condition: string;
+    icon: string;
+    rarity: "common" | "rare" | "epic" | "legendary";
+
+    rule: {
+        type:
+            | "posts"
+            | "likes_received"
+            | "followers"
+            | "streak"
+            | "manual"
+            | "custom";
+
+        value?: number;
+    };
+
+    xpReward: number;
+    active: boolean;
+    createdAt: number;
 }
 
 export interface IUserSummary {
@@ -117,4 +140,13 @@ export interface IUserSummary {
     avatarUrl: string | null;
     createdAt?: number | null;
     isFollowing?: boolean;
+}
+
+export interface IRole {
+    id: string;
+    name: string;
+    color: string;
+    permissions: string[];
+    priority: number;
+    createdAt: number;
 }

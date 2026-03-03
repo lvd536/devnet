@@ -26,6 +26,7 @@ import {
     startAfter,
     DocumentSnapshot,
     QuerySnapshot,
+    increment,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import {
@@ -94,18 +95,30 @@ export async function loginWithGithub(desiredUsername?: string) {
             const chosenUsername =
                 desiredUsername ?? githubLogin ?? user.displayName ?? user.uid;
 
-            const newUser: IUserProfile = {
+            const newUser = {
                 username: chosenUsername,
+                role: {
+                    id: "member",
+                    name: "Member",
+                    color: "green-500",
+                    permissions: [],
+                    priority: 0,
+                    createdAt: 0,
+                },
                 githubUsername: githubLogin ?? user.photoURL ?? null,
                 avatarUrl: user.photoURL ?? null,
-                bio: "",
                 xp: 0,
                 level: 0,
-                followersCount: 0,
-                followingCount: 0,
-                postsCount: 0,
-                projectsCount: 0,
-                lastSyncAt: null,
+                stats: {
+                    postsCount: 0,
+                    projectsCount: 0,
+                    likesReceived: 0,
+                    likesGiven: 0,
+                    commentsCount: 0,
+                    followersCount: 0,
+                    followingCount: 0,
+                    streakDays: 0,
+                },
                 createdAt: serverTimestamp(),
             };
 
@@ -134,7 +147,7 @@ export async function setupUser(user: User) {
 
     setUserData(
         user,
-        userSnap.data() as IUserProfile,
+        { id: userSnap.id, ...userSnap.data() } as IUserProfile,
         projectsSnap.docs.map(
             (proj) =>
                 ({
@@ -214,19 +227,30 @@ export async function handleSync() {
 }
 
 export async function sendPost(content?: string, projectId?: string | null) {
-    try {
-        const post = {
-            authorId: auth.currentUser!.uid,
-            content,
-            projectId: projectId ?? null,
-            likesCount: 0,
-            commentsCount: 0,
-            createdAt: Date.now(),
-        };
-        await addDoc(collection(db, "posts"), post);
-    } catch (err) {
-        console.error(err);
-    }
+    const user = auth.currentUser;
+    if (!user) throw new Error("Not authenticated");
+    const userRef = doc(db, "users", user.uid);
+    const postRef = doc(collection(db, "posts"));
+    const post = {
+        authorId: auth.currentUser!.uid,
+        content,
+        projectId: projectId ?? null,
+        likesCount: 0,
+        commentsCount: 0,
+        createdAt: Date.now(),
+    };
+    await runTransaction(db, async (tx) => {
+        const userSnap = await tx.get(userRef);
+
+        if (!userSnap.exists()) {
+            throw new Error("User does not exist");
+        }
+
+        tx.set(postRef, post);
+        tx.update(userRef, {
+            "stats.postsCount": increment(1),
+        });
+    });
 }
 
 export async function getProjectData(projectId: string) {
@@ -307,15 +331,25 @@ export async function getPost(postId: string) {
 
 export async function addLike(postId: string, userId: string) {
     try {
+        const userRef = doc(db, "users", userId);
         const postRef = doc(db, "posts", postId);
         const likeRef = doc(db, "posts", postId, "likes", userId);
 
         await runTransaction(db, async (tx) => {
-            const postSnap = await tx.get(postRef);
+            const [userSnap, postSnap, likeSnap] = await Promise.all([
+                await tx.get(userRef),
+                await tx.get(postRef),
+                await tx.get(likeRef),
+            ]);
+            if (!userSnap.exists()) throw new Error("User does not exist");
             if (!postSnap.exists()) throw new Error("Post does not exist");
+            if (likeSnap.exists()) throw new Error("Like exists");
 
-            const likeSnap = await tx.get(likeRef);
-            if (likeSnap.exists()) return;
+            const postCreatorId = (postSnap.data() as IPost).authorId;
+            const postCreatorRef = doc(db, "users", postCreatorId);
+            const postCreatorSnap = await tx.get(postCreatorRef);
+            if (!postCreatorSnap.exists())
+                throw new Error("Post creator not exists");
 
             tx.set(likeRef, {
                 createdAt: serverTimestamp(),
@@ -326,6 +360,12 @@ export async function addLike(postId: string, userId: string) {
             tx.update(postRef, {
                 likesCount: currentLikes + 1,
             });
+            tx.update(userRef, {
+                "stats.likesGiven": increment(1),
+            });
+            tx.update(postCreatorRef, {
+                "stats.likesReceived": increment(1),
+            });
         });
     } catch (err) {
         console.error("addLike error:", err);
@@ -334,21 +374,43 @@ export async function addLike(postId: string, userId: string) {
 
 export async function deleteLike(postId: string, userId: string) {
     try {
+        const userRef = doc(db, "users", userId);
         const postRef = doc(db, "posts", postId);
         const likeRef = doc(db, "posts", postId, "likes", userId);
 
         await runTransaction(db, async (tx) => {
-            const postSnap = await tx.get(postRef);
+            const [userSnap, postSnap, likeSnap] = await Promise.all([
+                await tx.get(userRef),
+                await tx.get(postRef),
+                await tx.get(likeRef),
+            ]);
+            if (!userSnap.exists()) throw new Error("User does not exist");
             if (!postSnap.exists()) throw new Error("Post does not exist");
+            if (!likeSnap.exists()) throw new Error("Like exists");
 
-            const likeSnap = await tx.get(likeRef);
-            if (!likeSnap.exists()) return;
+            const postCreatorId = (postSnap.data() as IPost).authorId;
+            const postCreatorRef = doc(db, "users", postCreatorId);
+            const postCreatorSnap = await tx.get(postCreatorRef);
+            if (!postCreatorSnap.exists())
+                throw new Error("Post creator not exists");
 
             tx.delete(likeRef);
 
             const currentLikes = (postSnap.data()?.likesCount as number) || 0;
             tx.update(postRef, {
                 likesCount: currentLikes > 0 ? currentLikes - 1 : 0,
+            });
+            tx.update(userRef, {
+                "stats.likesGiven":
+                    (userSnap.data() as IUserProfile).stats.likesGiven > 0
+                        ? increment(-1)
+                        : 0,
+            });
+            tx.update(postCreatorRef, {
+                "stats.likesReceived": (postCreatorSnap.data() as IUserProfile)
+                    .stats.likesReceived
+                    ? increment(-1)
+                    : 0,
             });
         });
     } catch (err) {
@@ -387,12 +449,18 @@ export async function addComment(
     message: string,
 ) {
     try {
+        const userRef = doc(db, "users", userId);
         const postRef = doc(db, "posts", postId);
         const commentsCol = collection(db, "posts", postId, "comments");
         const commentRef = doc(commentsCol);
 
         await runTransaction(db, async (tx) => {
-            const postSnap = await tx.get(postRef);
+            const [userSnap, postSnap] = await Promise.all([
+                await tx.get(userRef),
+                await tx.get(postRef),
+            ]);
+
+            if (!userSnap.exists()) throw new Error("User does not exist");
             if (!postSnap.exists()) throw new Error("Post does not exist");
 
             tx.set(commentRef, {
@@ -403,8 +471,13 @@ export async function addComment(
 
             const currentComments =
                 (postSnap.data()?.commentsCount as number) || 0;
+
             tx.update(postRef, {
                 commentsCount: currentComments + 1,
+            });
+
+            tx.update(userRef, {
+                "stats.commentsCount": increment(1),
             });
         });
     } catch (err) {
@@ -414,22 +487,39 @@ export async function addComment(
 
 export async function deleteComment(postId: string, commentId: string) {
     try {
+        const user = auth.currentUser;
+        if (!user) throw new Error("Not authenticated");
+
+        const userRef = doc(db, "users", user.uid);
         const postRef = doc(db, "posts", postId);
         const commentRef = doc(db, "posts", postId, "comments", commentId);
 
         await runTransaction(db, async (tx) => {
-            const postSnap = await tx.get(postRef);
-            if (!postSnap.exists()) throw new Error("Post does not exist");
+            const [userSnap, postSnap, commentSnap] = await Promise.all([
+                await tx.get(userRef),
+                await tx.get(postRef),
+                await tx.get(commentRef),
+            ]);
 
-            const commentSnap = await tx.get(commentRef);
-            if (!commentSnap.exists()) return;
+            if (!userSnap.exists()) throw new Error("User does not exist");
+            if (!postSnap.exists()) throw new Error("Post does not exist");
+            if (!commentSnap.exists())
+                throw new Error("Comment does not exist");
 
             tx.delete(commentRef);
 
             const currentComments =
                 (postSnap.data()?.commentsCount as number) || 0;
+
             tx.update(postRef, {
                 commentsCount: currentComments > 0 ? currentComments - 1 : 0,
+            });
+
+            tx.update(userRef, {
+                "stats.commentsCount":
+                    (userSnap.data() as IUserProfile).stats.commentsCount > 0
+                        ? increment(-1)
+                        : 0,
             });
         });
     } catch (err) {
@@ -493,14 +583,11 @@ export async function addFollower(
             tx.set(followerRef, { createdAt: serverTimestamp() });
             tx.set(followingRef, { createdAt: serverTimestamp() });
 
-            const targetFollowersCount =
-                (targetSnap.data()?.followersCount as number) || 0;
-            const currentFollowingCount =
-                (currentSnap.data()?.followingCount as number) || 0;
-
-            tx.update(targetRef, { followersCount: targetFollowersCount + 1 });
+            tx.update(targetRef, {
+                "stats.followersCount": increment(1),
+            });
             tx.update(currentRef, {
-                followingCount: currentFollowingCount + 1,
+                "stats.followingCount": increment(1),
             });
         });
 
@@ -549,20 +636,27 @@ export async function removeFollower(
                 return;
             }
 
+            const targetData = targetSnap.data() as
+                | Partial<IUserProfile>
+                | undefined;
+            const currentData = currentSnap.data() as
+                | Partial<IUserProfile>
+                | undefined;
+
+            const targetFollowers =
+                (targetData?.stats?.followersCount as number) ?? 0;
+            const currentFollowing =
+                (currentData?.stats?.followingCount as number) ?? 0;
+
+            if (targetFollowers > 0)
+                tx.update(targetRef, { "stats.followersCount": increment(-1) });
+            if (currentFollowing > 0)
+                tx.update(currentRef, {
+                    "stats.followingCount": increment(-1),
+                });
+
             tx.delete(followerRef);
             tx.delete(followingRef);
-
-            const targetFollowersCount =
-                (targetSnap.data()?.followersCount as number) || 0;
-            const currentFollowingCount =
-                (currentSnap.data()?.followingCount as number) || 0;
-
-            tx.update(targetRef, {
-                followersCount: Math.max(0, targetFollowersCount - 1),
-            });
-            tx.update(currentRef, {
-                followingCount: Math.max(0, currentFollowingCount - 1),
-            });
         });
 
         return true;

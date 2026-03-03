@@ -1,6 +1,8 @@
 import { Calendar } from "lucide-react";
 import ProfileMeta from "./ProfileMeta";
 import { auth } from "@/lib/firebase";
+import { IRole } from "@/interfaces/interfaces";
+import RolePill from "../RolePill";
 
 interface IProps {
     githubUsername: string | null;
@@ -9,6 +11,7 @@ interface IProps {
     followersCount: number;
     followingCount: number;
     registerDate: Date;
+    role: IRole;
 }
 
 export default function ProfileCredits({
@@ -18,6 +21,7 @@ export default function ProfileCredits({
     followersCount,
     followingCount,
     registerDate,
+    role,
 }: IProps) {
     const currentUserId = auth.currentUser?.uid;
     if (!currentUserId) return null;
@@ -29,6 +33,13 @@ export default function ProfileCredits({
                 {githubUsername && (
                     <p className="text-md text-text-secondary">@{username}</p>
                 )}
+                <div className="w-1 h-1 bg-text-muted rounded-full" />
+                <RolePill
+                    role={{ ...role }}
+                    variant="outline"
+                    size="sm"
+                    showDot={false}
+                />
             </div>
             <ProfileMeta
                 followersCount={followersCount}

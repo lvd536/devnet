@@ -95,9 +95,6 @@ export function AdminUsersTable({ users, loading, error }: IProps) {
                                                 Edit
                                             </button>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            Duplicate
-                                        </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem variant="destructive">
                                             Delete

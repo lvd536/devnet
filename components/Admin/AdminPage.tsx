@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import AdminNavigation from "./AdminNavigation";
-import AdminUsersTab from "./AdminUsersTab";
+import AdminUsersTab from "./Users/AdminUsersTab";
+import AdminRolesTab from "./Roles/AdminRolesTab";
 
 export default function AdminPage() {
     const [currentPage, setCurrentPage] = useState<
@@ -10,13 +11,14 @@ export default function AdminPage() {
     >("users");
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col h-full gap-2">
             <AdminNavigation
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
             />
-            <div className="flex flex-col gap-2 items-center justify-center">
+            <div className="flex flex-col h-full gap-2 items-center">
                 {currentPage === "users" && <AdminUsersTab />}
+                {currentPage === "roles" && <AdminRolesTab />}
             </div>
         </div>
     );

@@ -168,11 +168,11 @@ export default function AdminUserEdit({ user, open, onOpenChange }: Props) {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="...">
+            <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Edit User</DialogTitle>
+                    <DialogTitle>Редактирование пользователя</DialogTitle>
                     <DialogDescription>
-                        Редактирование пользователя
+                        Панель редактирование пользователя
                     </DialogDescription>
                 </DialogHeader>
 

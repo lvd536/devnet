@@ -1,5 +1,5 @@
 import useSearch from "@/hooks/useSearch";
-import SearchBar from "../SearchBar";
+import SearchBar from "../../SearchBar";
 import { AdminUsersTable } from "./AdminUsersTable";
 
 export default function AdminUsersTab() {

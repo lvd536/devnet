@@ -1,7 +1,7 @@
 import { IUserProfile } from "@/interfaces/interfaces";
 import { auth } from "@/lib/firebase";
-import PostAvatar from "../Post/PostAvatar";
-import FollowBtn from "../FollowBtn";
+import PostAvatar from "../../Post/PostAvatar";
+import FollowBtn from "../../FollowBtn";
 
 interface IProps {
     user: IUserProfile;

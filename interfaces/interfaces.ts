@@ -146,7 +146,7 @@ export interface IRole {
     id: string;
     name: string;
     color: string;
-    permissions: string[];
+    permissions: Array<"admin" | "moderator">;
     priority: number;
     createdAt: number;
 }

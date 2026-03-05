@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/table";
 import { IUserProfile } from "@/interfaces/interfaces";
 import { MoreHorizontalIcon } from "lucide-react";
-import PostAvatar from "../Post/PostAvatar";
-import RolePill from "../RolePill";
+import PostAvatar from "../../Post/PostAvatar";
+import RolePill from "../../RolePill";
 import AdminUserEdit from "./AdminUserEdit";
 import { useState } from "react";
 

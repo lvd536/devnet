@@ -231,3 +231,24 @@
         @apply bg-background text-text;
     }
 }
+
+.picker .react-colorful {
+    height: 90px;
+    width: 118px;
+}
+.picker .react-colorful__saturation {
+    border-radius: 4px 4px 0 0;
+}
+.picker .react-colorful__hue {
+    height: 10px;
+    border-radius: 0 0 4px 4px;
+}
+.picker .react-colorful__hue-pointer {
+    width: 6px;
+    height: inherit;
+    border-radius: 0;
+}
+.picker .react-colorful__pointer {
+    width: 12px;
+    height: 12px;
+}

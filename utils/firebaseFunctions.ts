@@ -27,6 +27,7 @@ import {
     DocumentSnapshot,
     QuerySnapshot,
     increment,
+    deleteDoc,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import {
@@ -37,6 +38,7 @@ import {
     ILike,
     IPost,
     IProject,
+    IRole,
     IUserProfile,
     IUserSummary,
 } from "@/interfaces/interfaces";
@@ -1028,4 +1030,33 @@ export async function searchUsers(
     }
 
     return found;
+}
+
+export async function getRoles(): Promise<IRole[] | undefined> {
+    const rolesRef = collection(db, "roles");
+    const rolesSnap = await getDocs(rolesRef);
+
+    if (rolesSnap.empty) return undefined;
+    else
+        return rolesSnap.docs.map(
+            (doc) => ({ id: doc.id, ...doc.data() }) as IRole,
+        );
+}
+
+export async function addRole(role: IRole) {
+    try {
+        const rolesRef = doc(db, "roles", role.id);
+        await setDoc(rolesRef, role);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function deleteRole(roleId: string) {
+    try {
+        const roleRef = doc(db, "roles", roleId);
+        await deleteDoc(roleRef);
+    } catch (err) {
+        console.error(err);
+    }
 }

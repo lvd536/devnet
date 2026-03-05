@@ -20,6 +20,7 @@ import PostAvatar from "../../Post/PostAvatar";
 import RolePill from "../../RolePill";
 import AdminUserEdit from "./AdminUserEdit";
 import { useState } from "react";
+import { deleteUser } from "@/utils/firebaseFunctions";
 
 interface IProps {
     users: IUserProfile[] | undefined;
@@ -96,7 +97,10 @@ export function AdminUsersTable({ users, loading, error }: IProps) {
                                             </button>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
-                                        <DropdownMenuItem variant="destructive">
+                                        <DropdownMenuItem
+                                            variant="destructive"
+                                            onClick={() => deleteUser(user.id)}
+                                        >
                                             Delete
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>

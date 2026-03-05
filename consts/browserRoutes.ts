@@ -37,4 +37,14 @@ export const browserRoutes = {
         name: "Admin console",
         link: "/admin",
     },
+    api: {
+        name: "Admin Api",
+        link: "/api",
+        admin: {
+            deleteUser: {
+                name: "Delete user",
+                link: (uid: string) => "/api/admin/delete-user/" + uid,
+            },
+        },
+    },
 } as const;

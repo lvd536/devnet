@@ -72,6 +72,7 @@ export default function ProfileHeader() {
                         : profile.stats.followingCount
                 }
                 role={userProfile ? userProfile.role : profile.role}
+                roles={userProfile ? userProfile.roles : profile.roles}
                 registerDate={date}
                 targetUserId={userProfile ? userProfile.id! : user.uid}
             />

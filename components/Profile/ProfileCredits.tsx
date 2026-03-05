@@ -3,6 +3,7 @@ import ProfileMeta from "./ProfileMeta";
 import { auth } from "@/lib/firebase";
 import { IRole } from "@/interfaces/interfaces";
 import RolePill from "../RolePill";
+import ProfileRole from "./ProfileRole";
 
 interface IProps {
     githubUsername: string | null;
@@ -12,6 +13,7 @@ interface IProps {
     followingCount: number;
     registerDate: Date;
     role: IRole;
+    roles: IRole[] | undefined;
 }
 
 export default function ProfileCredits({
@@ -22,6 +24,7 @@ export default function ProfileCredits({
     followingCount,
     registerDate,
     role,
+    roles,
 }: IProps) {
     const currentUserId = auth.currentUser?.uid;
     if (!currentUserId) return null;
@@ -34,12 +37,7 @@ export default function ProfileCredits({
                     <p className="text-md text-text-secondary">@{username}</p>
                 )}
                 <div className="w-1 h-1 bg-text-muted rounded-full" />
-                <RolePill
-                    role={{ ...role }}
-                    variant="outline"
-                    size="sm"
-                    showDot={false}
-                />
+                <ProfileRole role={role} roles={roles} />
             </div>
             <ProfileMeta
                 followersCount={followersCount}

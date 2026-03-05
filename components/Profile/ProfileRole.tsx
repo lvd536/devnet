@@ -28,7 +28,7 @@ export default function ProfileRole({ role, roles }: IProps) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuGroup className="flex flex-col items-center justify-center bg-background py-1">
+                <DropdownMenuGroup className="flex flex-wrap gap-2 items-center justify-center bg-background py-1 px-2">
                     {roles ? (
                         roles.map((role) => (
                             <RolePill

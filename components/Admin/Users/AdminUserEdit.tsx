@@ -6,101 +6,27 @@ import {
     DialogTitle,
     DialogDescription,
     DialogFooter,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useForm, Path } from "react-hook-form";
+import { Controller, useForm, Path } from "react-hook-form";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { IUserProfile } from "@/interfaces/interfaces";
+import { IRole, IUserProfile } from "@/interfaces/interfaces";
 import { checkUsernameExists } from "@/utils/firebaseFunctions";
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export type DeepPartial<T> = T extends Function
-    ? T
-    : T extends Array<infer U>
-      ? DeepPartial<U>[]
-      : T extends object
-        ? { [K in keyof T]?: DeepPartial<T[K]> }
-        : T;
-
-function isPlainObject(v: unknown): v is Record<string, unknown> {
-    return typeof v === "object" && v !== null && !Array.isArray(v);
-}
-
-function getDotPaths(
-    obj: unknown,
-    prefix = "",
-    excludeKeys = new Set<string>(),
-): string[] {
-    if (!isPlainObject(obj)) return [];
-    const paths: string[] = [];
-
-    for (const key of Object.keys(obj)) {
-        const low = key.toLowerCase();
-        if (excludeKeys.has(low)) continue;
-        const val = (obj as Record<string, unknown>)[key];
-        const path = prefix ? `${prefix}.${key}` : key;
-
-        if (isPlainObject(val)) {
-            paths.push(...getDotPaths(val, path, excludeKeys));
-        } else {
-            paths.push(path);
-        }
-    }
-
-    return paths;
-}
-
-function getByPath<T = unknown>(obj: unknown, path: string): T | undefined {
-    if (!path) return undefined;
-    let cur: unknown = obj;
-
-    for (const part of path.split(".")) {
-        if (!isPlainObject(cur)) return undefined;
-        cur = (cur as Record<string, unknown>)[part];
-    }
-
-    return cur as T | undefined;
-}
-
-function coercePayloadTypes(payload: unknown, example: unknown): unknown {
-    if (payload == null) return payload;
-
-    if (typeof example === "number" && typeof payload === "string") {
-        const n = Number(payload);
-        return Number.isNaN(n) ? payload : n;
-    }
-
-    if (typeof example === "boolean" && typeof payload === "string") {
-        if (payload === "true") return true;
-        if (payload === "false") return false;
-        return Boolean(payload);
-    }
-
-    if (Array.isArray(payload)) {
-        if (!Array.isArray(example)) return payload;
-        return payload.map((p, i) =>
-            coercePayloadTypes(p, (example as unknown[])[i]),
-        );
-    }
-
-    if (isPlainObject(payload)) {
-        const out: Record<string, unknown> = {};
-        for (const k of Object.keys(payload)) {
-            out[k] = coercePayloadTypes(
-                (payload as Record<string, unknown>)[k],
-                isPlainObject(example)
-                    ? (example as Record<string, unknown>)[k]
-                    : undefined,
-            );
-        }
-        return out;
-    }
-
-    return payload;
-}
+import { Field, FieldGroup } from "@/components/ui/field";
+import useRoles from "@/hooks/useRoles";
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Plus } from "lucide-react";
+import RolePill from "@/components/RolePill";
 
 interface Props {
     user: IUserProfile;
@@ -108,17 +34,23 @@ interface Props {
     onOpenChange: (open: boolean) => void;
 }
 
+type FormData = Omit<IUserProfile, "id" | "createdAt" | "lastSyncAt">;
+
+function removeUndefined(obj: object) {
+    return Object.fromEntries(
+        Object.entries(obj).filter(([_, v]) => v !== undefined),
+    );
+}
+
 export default function AdminUserEdit({ user, open, onOpenChange }: Props) {
+    const { loading, roles, error: rolesError } = useRoles();
     const [error, setError] = useState<string | null>(null);
 
-    const exclude = new Set(["id", "createdat", "lastsyncat", "role"]);
-    const fields = getDotPaths(user, "", exclude);
-
-    const { register, handleSubmit, reset } = useForm<
-        DeepPartial<IUserProfile>
-    >({
-        defaultValues: user as DeepPartial<IUserProfile>,
+    const { register, handleSubmit, reset, control } = useForm<FormData>({
+        defaultValues: user as IUserProfile,
     });
+
+    const entryUsername = user.username;
 
     const validateUsername = async (username: string) => {
         setError(null);
@@ -132,7 +64,10 @@ export default function AdminUserEdit({ user, open, onOpenChange }: Props) {
             setError("username не может содержать спец. символы");
             return false;
         }
-        const isUsernameExists = await checkUsernameExists(username);
+        const isUsernameExists =
+            username === entryUsername
+                ? false
+                : await checkUsernameExists(username);
         if (!isUsernameExists) return true;
         if (isUsernameExists) {
             setError("Пользователь занят");
@@ -142,29 +77,27 @@ export default function AdminUserEdit({ user, open, onOpenChange }: Props) {
     };
 
     useEffect(() => {
-        reset(user as DeepPartial<IUserProfile>);
+        reset(user);
     }, [user, reset]);
 
-    async function onSubmit(values: DeepPartial<IUserProfile>) {
+    async function onSubmit(values: FormData) {
         try {
-            const coerced = coercePayloadTypes(
-                values,
-                user,
-            ) as Partial<IUserProfile>;
-            if (!coerced.username) return;
+            if (!values.username) return;
 
-            const isUsernameValid = await validateUsername(coerced.username);
+            const isUsernameValid = await validateUsername(values.username);
             if (!isUsernameValid) return;
 
             const ref = doc(db, "users", user.id);
-            await setDoc(ref, coerced, { merge: true });
+            await setDoc(ref, removeUndefined(values), { merge: true });
             onOpenChange(false);
         } catch (err) {
             console.error("Ошибка при обновлении пользователя:", err);
         }
     }
 
-    if (!user) return null;
+    if (loading) return <div>Загрузка...</div>;
+
+    if (!user || rolesError || !roles) return null;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -181,36 +114,197 @@ export default function AdminUserEdit({ user, open, onOpenChange }: Props) {
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     <div className="grid grid-cols-2 gap-4">
-                        {fields.map((path) => {
-                            const label = path.split(".").slice(-1)[0];
-                            const exampleVal = getByPath(user, path);
-                            const type =
-                                typeof exampleVal === "number"
-                                    ? "number"
-                                    : label.toLowerCase().includes("email")
-                                      ? "email"
-                                      : label.toLowerCase().includes("password")
-                                        ? "password"
-                                        : "text";
-                            return (
-                                <div className="grid gap-3" key={path}>
-                                    <Label htmlFor={path}>{label}</Label>
-                                    <Input
-                                        id={path}
-                                        {...register(
-                                            path as Path<
-                                                DeepPartial<IUserProfile>
-                                            >,
-                                        )}
-                                        type={type}
-                                        defaultValue={
-                                            getByPath(user, path) as string
-                                        }
-                                    />
-                                </div>
-                            );
-                        })}
+                        <div className="grid gap-3">
+                            <Label htmlFor="githubUsername">
+                                GitHub username
+                            </Label>
+                            <Input
+                                id="githubUsername"
+                                {...register("githubUsername")}
+                                type="text"
+                                defaultValue={user.githubUsername || ""}
+                            />
+                        </div>
+                        <div className="grid gap-3">
+                            <Label htmlFor="username">Username</Label>
+                            <Input
+                                id="username"
+                                {...register("username")}
+                                type="text"
+                                defaultValue={user.username}
+                            />
+                        </div>
                     </div>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="outline">Edit stats</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogTitle>Stats edit</DialogTitle>
+                            <FieldGroup>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {(
+                                        Object.entries(user.stats) as [
+                                            keyof IUserProfile["stats"],
+                                            number,
+                                        ][]
+                                    ).map(([label, value]) => (
+                                        <div
+                                            className="grid gap-3"
+                                            key={String(label)}
+                                        >
+                                            <Label htmlFor={`stat-${label}`}>
+                                                {label}
+                                            </Label>
+                                            <Input
+                                                id={`stat-${label}`}
+                                                {...register(
+                                                    `stats.${label}` as Path<FormData>,
+                                                )}
+                                                type="number"
+                                                defaultValue={value}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </FieldGroup>
+                        </DialogContent>
+                    </Dialog>
+
+                    <Field>
+                        <Label>Гл.Роль</Label>
+                        <Controller
+                            control={control}
+                            name="role"
+                            render={({ field }) => {
+                                const selectedRole = field.value;
+
+                                return (
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost">
+                                                    <RolePill
+                                                        role={selectedRole}
+                                                        variant="outline"
+                                                        size="sm"
+                                                        showDot={false}
+                                                    />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+
+                                            <DropdownMenuContent className="sm:max-w-xs bg-background">
+                                                <DropdownMenuGroup>
+                                                    {roles.map((role) => (
+                                                        <DropdownMenuItem
+                                                            key={role.id}
+                                                            onClick={() => {
+                                                                if (
+                                                                    selectedRole.id ===
+                                                                    role.id
+                                                                )
+                                                                    return;
+                                                                field.onChange(
+                                                                    role,
+                                                                );
+                                                            }}
+                                                        >
+                                                            {role.name}
+                                                        </DropdownMenuItem>
+                                                    ))}
+                                                </DropdownMenuGroup>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                );
+                            }}
+                        />
+                    </Field>
+
+                    <Field>
+                        <Label>Роли</Label>
+                        <Controller
+                            control={control}
+                            name="roles"
+                            render={({ field }) => {
+                                const selectedRoles = field.value || [];
+
+                                return (
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        {selectedRoles.map(
+                                            (role: IRole, index: number) => (
+                                                <div
+                                                    className="text-sm"
+                                                    key={`selected-role-${index}`}
+                                                    onClick={() =>
+                                                        field.onChange(
+                                                            selectedRoles.filter(
+                                                                (r) =>
+                                                                    r.id !==
+                                                                    role.id,
+                                                            ),
+                                                        )
+                                                    }
+                                                >
+                                                    <RolePill
+                                                        role={role}
+                                                        variant="outline"
+                                                        size="sm"
+                                                        showDot={false}
+                                                    />
+                                                </div>
+                                            ),
+                                        )}
+
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <div className="flex items-center justify-between gap-2 cursor-pointer">
+                                                    <Plus
+                                                        width={20}
+                                                        height={20}
+                                                        className="rounded-full p-1 bg-text-muted/30"
+                                                    />
+                                                </div>
+                                            </DropdownMenuTrigger>
+
+                                            <DropdownMenuContent className="sm:max-w-xs bg-background">
+                                                <DropdownMenuGroup>
+                                                    {roles.map(
+                                                        (role, index) => (
+                                                            <DropdownMenuItem
+                                                                key={`role-${index}`}
+                                                                onClick={() => {
+                                                                    if (
+                                                                        selectedRoles.find(
+                                                                            (
+                                                                                r,
+                                                                            ) =>
+                                                                                r.id ===
+                                                                                role.id,
+                                                                        )
+                                                                    )
+                                                                        return;
+                                                                    field.onChange(
+                                                                        [
+                                                                            ...selectedRoles,
+                                                                            role,
+                                                                        ],
+                                                                    );
+                                                                }}
+                                                            >
+                                                                {role.name}
+                                                            </DropdownMenuItem>
+                                                        ),
+                                                    )}
+                                                </DropdownMenuGroup>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                );
+                            }}
+                        />
+                    </Field>
+
                     {error && (
                         <p className="text-red-500 text-sm text-center">
                             {error}

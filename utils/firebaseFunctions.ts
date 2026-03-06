@@ -31,6 +31,7 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import {
+    IBadge,
     IComment,
     IFollower,
     IFollowing,
@@ -1089,6 +1090,35 @@ export async function deleteUser(uid: string) {
     }
 
     alert("Пользователь удалён");
+}
+
+export async function getBadges(): Promise<IBadge[] | undefined> {
+    const badgesRef = collection(db, "badges");
+    const badgesSnap = await getDocs(badgesRef);
+
+    if (badgesSnap.empty) return undefined;
+    else
+        return badgesSnap.docs.map(
+            (doc) => ({ id: doc.id, ...doc.data() }) as IBadge,
+        );
+}
+
+export async function addBadge(badge: IBadge) {
+    try {
+        const badgesRef = doc(db, "badges", badge.id);
+        await setDoc(badgesRef, badge);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function deleteBadge(badgeId: string) {
+    try {
+        const roleRef = doc(db, "badges", badgeId);
+        await deleteDoc(roleRef);
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 export function calculateNextLevelXP(level: number) {

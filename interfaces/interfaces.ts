@@ -116,20 +116,6 @@ export interface IBadge {
     icon: string;
     rarity: "common" | "rare" | "epic" | "legendary";
 
-    rule: {
-        type:
-            | "posts"
-            | "likes_received"
-            | "followers"
-            | "streak"
-            | "manual"
-            | "custom";
-
-        value?: number;
-    };
-
-    xpReward: number;
-    active: boolean;
     createdAt: number;
 }
 

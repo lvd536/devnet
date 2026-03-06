@@ -43,6 +43,7 @@ import {
     IUserSummary,
 } from "@/interfaces/interfaces";
 import { setUserData, useUserProfileStore } from "@/stores/useProfileStore";
+import { processEvent } from "@/actions/gamification";
 
 export async function loginWithGithub(desiredUsername?: string) {
     const provider = new GithubAuthProvider();
@@ -253,6 +254,7 @@ export async function sendPost(content?: string, projectId?: string | null) {
             "stats.postsCount": increment(1),
         });
     });
+    processEvent(user.uid, "POST_CREATED");
 }
 
 export async function getProjectData(projectId: string) {
@@ -369,6 +371,7 @@ export async function addLike(postId: string, userId: string) {
                 "stats.likesReceived": increment(1),
             });
         });
+        processEvent(userId, "POST_LIKED");
     } catch (err) {
         console.error("addLike error:", err);
     }
@@ -415,6 +418,7 @@ export async function deleteLike(postId: string, userId: string) {
                     : 0,
             });
         });
+        processEvent(userId, "POST_DISLIKED");
     } catch (err) {
         console.error("deleteLike error:", err);
     }
@@ -482,6 +486,7 @@ export async function addComment(
                 "stats.commentsCount": increment(1),
             });
         });
+        processEvent(userId, "POST_COMMENT");
     } catch (err) {
         console.error("addComment error:", err);
     }
@@ -592,7 +597,7 @@ export async function addFollower(
                 "stats.followingCount": increment(1),
             });
         });
-
+        processEvent(currentUserId, "USER_FOLLOW");
         return true;
     } catch (err) {
         console.error("addFollower error:", err);
@@ -660,7 +665,7 @@ export async function removeFollower(
             tx.delete(followerRef);
             tx.delete(followingRef);
         });
-
+        processEvent(currentUserId, "USER_UNFOLLOW");
         return true;
     } catch (err) {
         console.error("removeFollower error:", err);
@@ -1061,7 +1066,6 @@ export async function deleteRole(roleId: string) {
     }
 }
 
-
 export async function deleteUser(uid: string) {
     const token = await auth.currentUser?.getIdToken();
 
@@ -1085,4 +1089,10 @@ export async function deleteUser(uid: string) {
     }
 
     alert("Пользователь удалён");
+}
+
+export function calculateNextLevelXP(level: number) {
+    const baseXP = 100;
+
+    return Math.floor(baseXP * Math.pow(level + 1, 2));
 }

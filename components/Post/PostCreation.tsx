@@ -23,7 +23,6 @@ export default function PostCreation() {
         sendPost(message, selectedRepo?.id).then(() => {
             setMessage("");
             setSelectedRepo(null);
-            window.location.reload();
         });
     };
 

@@ -20,11 +20,9 @@ export default function PostCommentInput({ postId }: IProps) {
             setError("Вы не написали сообщение");
             return;
         }
-        addComment(userId, postId, message)
-            .then(() => window.location.reload())
-            .catch((err) => {
-                setError(err);
-            });
+        addComment(userId, postId, message).catch((err) => {
+            setError(err);
+        });
     };
 
     if (!userId) return null;

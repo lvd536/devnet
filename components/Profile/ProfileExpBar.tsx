@@ -1,10 +1,12 @@
+import { calculateNextLevelXP } from "@/utils/firebaseFunctions";
+
 interface IProps {
     level: number;
     xp: number;
 }
 
 export default function ProfileExpBar({ level, xp }: IProps) {
-    const nextLevelAt = level * 100;
+    const nextLevelAt = calculateNextLevelXP(level);
     const levelReachPercent = ((xp / nextLevelAt) * 100).toFixed(1);
     return (
         <div className="mt-3 w-full">

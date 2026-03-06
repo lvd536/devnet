@@ -8,6 +8,7 @@ import useUserProfile from "@/hooks/useUserProfile";
 import { useParams } from "next/navigation";
 import DProfileControls from "./Dynamic/DProfileControls";
 import ProfileExpBar from "./ProfileExpBar";
+import ProfileBadges from "./ProfileBadges";
 
 export default function ProfileHeader() {
     const { userId } = useParams<{ userId: string }>();
@@ -80,6 +81,7 @@ export default function ProfileHeader() {
                 level={userProfile ? userProfile.level : profile.level}
                 xp={userProfile ? userProfile.xp : profile.xp}
             />
+            <ProfileBadges userId={userProfile ? userProfile.id : profile.id} />
         </>
     );
 }

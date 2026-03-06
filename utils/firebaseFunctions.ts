@@ -28,6 +28,7 @@ import {
     QuerySnapshot,
     increment,
     deleteDoc,
+    writeBatch,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import {
@@ -40,6 +41,7 @@ import {
     IPost,
     IProject,
     IRole,
+    IUserBadge,
     IUserProfile,
     IUserSummary,
 } from "@/interfaces/interfaces";
@@ -1125,4 +1127,58 @@ export function calculateNextLevelXP(level: number) {
     const baseXP = 100;
 
     return Math.floor(baseXP * Math.pow(level + 1, 2));
+}
+
+export async function getUserBadges(userId: string) {
+    const badges = await getDocs(collection(db, "users", userId, "badges"));
+
+    return badges.empty
+        ? undefined
+        : (badges.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+          })) as IUserBadge[]);
+}
+
+export async function setUserBadges(
+    userId: string,
+    badges: (IUserBadge & { id?: string })[],
+): Promise<string[]> {
+    const colRef = collection(db, "users", userId, "badges");
+    const batch = writeBatch(db);
+
+    const existingSnap = await getDocs(colRef);
+
+    const newIds = new Set<string>();
+    const createdIds: string[] = [];
+
+    for (const b of badges) {
+        let docRef;
+        if (b.id) {
+            docRef = doc(colRef, b.id);
+            newIds.add(b.id);
+        } else {
+            docRef = doc(colRef);
+            newIds.add(docRef.id);
+            createdIds.push(docRef.id);
+        }
+
+        const payload: IUserBadge = {
+            ...b,
+            awardedAt: b.awardedAt ?? Date.now(),
+            awardedBy: b.awardedBy ?? "system",
+        };
+
+        batch.set(docRef, payload);
+    }
+
+    existingSnap.docs.forEach((d) => {
+        if (!newIds.has(d.id)) {
+            batch.delete(d.ref);
+        }
+    });
+
+    await batch.commit();
+
+    return Array.from(newIds);
 }

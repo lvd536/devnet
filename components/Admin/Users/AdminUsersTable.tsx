@@ -21,18 +21,27 @@ import RolePill from "../../RolePill";
 import AdminUserEdit from "./AdminUserEdit";
 import { useState } from "react";
 import { deleteUser } from "@/utils/firebaseFunctions";
+import useUserBadges from "@/hooks/useUserBadges";
+import AdminUserBadgesEdit from "./AdminUserBadgesEdit";
 
 interface IProps {
+    userId: string;
     users: IUserProfile[] | undefined;
     loading: boolean;
     error: string | null;
 }
 
-export function AdminUsersTable({ users, loading, error }: IProps) {
+export function AdminUsersTable({ users, loading, error, userId }: IProps) {
     const [editingUser, setEditingUser] = useState<IUserProfile | null>(null);
+    const [editingUserBadges, setEditingUserBadges] = useState<boolean>(false);
+    const {
+        userBadges,
+        loading: userBadgesLoading,
+        error: userBadgesError,
+    } = useUserBadges({ userId });
 
-    if (loading) return <div>Загрузка...</div>;
-    if (!users || error) return null;
+    if (loading || userBadgesLoading) return <div>Загрузка...</div>;
+    if (!users || error || userBadgesError) return null;
 
     return (
         <>
@@ -96,6 +105,18 @@ export function AdminUsersTable({ users, loading, error }: IProps) {
                                                 Edit
                                             </button>
                                         </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setEditingUserBadges(true);
+                                                }}
+                                                className="w-full text-left"
+                                            >
+                                                Edit badges
+                                            </button>
+                                        </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                             variant="destructive"
@@ -116,6 +137,15 @@ export function AdminUsersTable({ users, loading, error }: IProps) {
                     open={Boolean(editingUser)}
                     onOpenChange={(open) => {
                         if (!open) setEditingUser(null);
+                    }}
+                />
+            )}
+            {editingUserBadges && (
+                <AdminUserBadgesEdit
+                    userBadges={userBadges}
+                    open={Boolean(editingUserBadges)}
+                    onOpenChange={(open) => {
+                        if (!open) setEditingUserBadges(false);
                     }}
                 />
             )}

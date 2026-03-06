@@ -104,6 +104,7 @@ export interface INotification {
 }
 
 export interface IUserBadge {
+    id: string;
     awardedAt: number;
     awardedBy: "system" | string;
 }

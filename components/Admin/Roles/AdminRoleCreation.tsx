@@ -1,3 +1,4 @@
+import { addRole } from "@/actions/roles";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -21,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ROLE_PERMISSIONS } from "@/consts/rolePermissions";
 import { IRole } from "@/interfaces/interfaces";
-import { addRole } from "@/utils/firebaseFunctions";
+import { auth } from "@/lib/firebase";
 import { Plus, SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { HexColorPicker } from "react-colorful";
@@ -47,6 +48,12 @@ export default function AdminRoleCreation({ roles }: IProps) {
         e.preventDefault();
         setError(null);
 
+        const user = auth.currentUser;
+        if (!user) {
+            setError("Unauthorized");
+            return;
+        }
+
         const isRoleNameExists = roles.some(
             (role) => formData.name === role.id,
         );
@@ -56,9 +63,11 @@ export default function AdminRoleCreation({ roles }: IProps) {
         }
 
         const roleToAdd = { ...formData, id: formData.name };
-        addRole(roleToAdd)
-            .then(() => setFormData(initialFormData))
-            .catch((err) => setError(String(err?.message ?? err)));
+        user.getIdToken().then((token) => {
+            addRole(token, roleToAdd)
+                .then(() => setFormData(initialFormData))
+                .catch((err) => setError(String(err?.message ?? err)));
+        });
     };
 
     return (

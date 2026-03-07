@@ -1,24 +1,24 @@
 "use client";
 
+import { addFollower, removeFollower } from "@/actions/follow";
 import { browserRoutes } from "@/consts/browserRoutes";
-import {
-    addFollower,
-    getIsFollower,
-    removeFollower,
-} from "@/utils/firebaseFunctions";
+import { auth } from "@/lib/firebase";
+import { getIsFollower } from "@/utils/firebaseFunctions";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface IProps {
-    userId: string;
     targetUserId: string;
 }
 
-export default function useFollow({ userId, targetUserId }: IProps) {
+export default function useFollow({ targetUserId }: IProps) {
     const [followed, setFollowed] = useState<boolean>(false);
     const [initialized, setInitialized] = useState<boolean>(false);
     const [pending, setPending] = useState<boolean>(false);
     const router = useRouter();
+
+    const user = auth.currentUser;
+    const userId = user?.uid;
 
     useEffect(() => {
         let mounted = true;
@@ -43,7 +43,7 @@ export default function useFollow({ userId, targetUserId }: IProps) {
     }, [userId, targetUserId, router]);
 
     const handleToggleFollow = async () => {
-        if (!targetUserId || !userId) return;
+        if (!targetUserId || !user) return;
         if (pending) return;
 
         const newState = !followed;
@@ -51,13 +51,15 @@ export default function useFollow({ userId, targetUserId }: IProps) {
         setPending(true);
 
         try {
-            if (newState) {
-                const ok = await addFollower(targetUserId, userId);
-                if (!ok) throw new Error("addFollower failed");
-            } else {
-                const ok = await removeFollower(targetUserId, userId);
-                if (!ok) throw new Error("removeFollower failed");
-            }
+            user.getIdToken().then(async (token) => {
+                if (newState) {
+                    const ok = await addFollower(targetUserId, token);
+                    if (!ok) throw new Error("addFollower failed");
+                } else {
+                    const ok = await removeFollower(targetUserId, token);
+                    if (!ok) throw new Error("removeFollower failed");
+                }
+            });
         } catch (err) {
             console.error("Follow toggle failed:", err);
             setFollowed(!newState);

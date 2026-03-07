@@ -4,17 +4,14 @@ import useFollow from "@/hooks/useFollow";
 
 interface IProps {
     userId: string;
-    currentUserId: string;
 }
 
-export default function FollowBtn({ currentUserId, userId }: IProps) {
+export default function FollowBtn({ userId }: IProps) {
     const { followed, initialized, pending, handleToggleFollow } = useFollow({
         targetUserId: userId,
-        userId: currentUserId!,
     });
 
-    if (!userId || !currentUserId) return null;
-    if (userId === currentUserId) return null;
+    if (!userId) return null;
     return (
         <button
             type="button"

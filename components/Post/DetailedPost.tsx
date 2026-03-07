@@ -30,11 +30,13 @@ export default function DetailedPost() {
                         username={user.username}
                         githubUsername={user.githubUsername}
                         avatarUrl={user.avatarUrl}
+                        userId={user.id}
                     />
                     <PostCredits
                         username={user.username}
                         githubUsername={user.githubUsername}
                         createdAt={post.createdAt}
+                        userId={user.id}
                     />
                 </div>
                 <div className="flex w-full flex-col gap-1">

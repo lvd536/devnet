@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/table";
 import { MoreHorizontalIcon } from "lucide-react";
 import { IBadge } from "@/interfaces/interfaces";
-import { deleteBadge } from "@/utils/firebaseFunctions";
 import { badgeIcons } from "@/utils/badgeIcons";
 import { Badge } from "@/components/Badge";
+import { auth } from "@/lib/firebase";
+import { deleteBadge } from "@/actions/badges";
 
 interface IProps {
     badges?: IBadge[];
@@ -30,6 +31,14 @@ export function AdminBadgesTable({ badges }: IProps) {
                 Пусто...
             </div>
         );
+
+    function handleDeleteRole(badgeId: string) {
+        const user = auth.currentUser;
+        if (!user) return;
+        user.getIdToken().then((token) => {
+            deleteBadge(token, badgeId);
+        });
+    }
 
     return (
         <>
@@ -82,7 +91,7 @@ export function AdminBadgesTable({ badges }: IProps) {
                                             <DropdownMenuItem
                                                 variant="destructive"
                                                 onClick={() =>
-                                                    deleteBadge(badge.id)
+                                                    handleDeleteRole(badge.id)
                                                 }
                                             >
                                                 Delete

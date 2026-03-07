@@ -1,10 +1,12 @@
 import { browserRoutes } from "@/consts/browserRoutes";
+import { FirestoreCreatedAt } from "@/interfaces/interfaces";
+import { formatFirestoreDate } from "@/utils/dateConverter";
 import Link from "next/link";
 
 interface IProps {
     username: string;
     githubUsername: string | null;
-    createdAt: number;
+    createdAt: FirestoreCreatedAt;
     userId: string;
 }
 
@@ -28,11 +30,7 @@ export default function PostCredits({
                 )}
             </Link>
             <p className="text-xs text-text/50">
-                {new Date(createdAt).toLocaleDateString("ru-RU", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                })}
+                {formatFirestoreDate(createdAt)}
             </p>
         </div>
     );

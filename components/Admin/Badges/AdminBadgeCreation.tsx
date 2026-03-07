@@ -1,3 +1,4 @@
+import { addBadge } from "@/actions/badges";
 import { Badge } from "@/components/Badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,8 +23,8 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IBadge } from "@/interfaces/interfaces";
+import { auth } from "@/lib/firebase";
 import { badgeIconKeys, badgeIcons } from "@/utils/badgeIcons";
-import { addBadge } from "@/utils/firebaseFunctions";
 import { SquarePlus } from "lucide-react";
 import { useState } from "react";
 
@@ -57,6 +58,12 @@ export default function AdminBadgeCreation({ badges }: IProps) {
         e.preventDefault();
         setError(null);
 
+        const user = auth.currentUser;
+        if (!user) {
+            setError("Unauthorized");
+            return;
+        }
+
         const isBadgeIdExists = badges.some(
             (badge) => formData.id === badge.id,
         );
@@ -66,9 +73,11 @@ export default function AdminBadgeCreation({ badges }: IProps) {
         }
 
         const badgeToAdd = { ...formData, id: formData.id };
-        addBadge(badgeToAdd)
-            .then(() => setFormData(initialFormData))
-            .catch((err) => setError(String(err?.message ?? err)));
+        user.getIdToken().then((token) => {
+            addBadge(token, badgeToAdd)
+                .then(() => setFormData(initialFormData))
+                .catch((err) => setError(String(err?.message ?? err)));
+        });
     };
 
     if (!badges) return null;

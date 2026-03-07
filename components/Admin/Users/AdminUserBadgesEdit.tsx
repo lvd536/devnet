@@ -21,8 +21,8 @@ import { Badge } from "@/components/Badge";
 import { badgeIcons } from "@/utils/badgeIcons";
 import { IUserBadge } from "@/interfaces/interfaces";
 import { Plus } from "lucide-react";
-import { setUserBadges } from "@/utils/firebaseFunctions";
 import { auth } from "@/lib/firebase";
+import { setUserBadges } from "@/actions/badges";
 
 interface Props {
     userBadges: IUserBadge[] | undefined;
@@ -41,11 +41,13 @@ export default function AdminUserBadgesEdit({
 
     async function onSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
-        const userId = auth.currentUser?.uid;
-        if (!userId) return;
-        setUserBadges(userId, newBadges)
-            .then(() => onOpenChange(false))
-            .catch((err) => setError(err.message ?? err));
+        const user = auth.currentUser;
+        if (!user) return;
+        user.getIdToken().then((token) => {
+            setUserBadges(token, newBadges)
+                .then(() => onOpenChange(false))
+                .catch((err) => setError(err.message ?? err));
+        });
     }
 
     if (badgesLoading) return <div>Загрузка...</div>;

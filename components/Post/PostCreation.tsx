@@ -6,8 +6,9 @@ import { BookPlus, MessageSquareOff, BookMinus } from "lucide-react";
 import { useState } from "react";
 import { IProject } from "@/interfaces/interfaces";
 import Repository from "../Repository";
-import { sendPost } from "@/utils/firebaseFunctions";
 import ProfileReposModal from "../Profile/ProfileReposModal";
+import { auth } from "@/lib/firebase";
+import { sendPost } from "@/actions/posts";
 
 export default function PostCreation() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -19,10 +20,13 @@ export default function PostCreation() {
 
     const handleSendPost = () => {
         if (!message && !selectedRepo) return;
-
-        sendPost(message, selectedRepo?.id).then(() => {
-            setMessage("");
-            setSelectedRepo(null);
+        const user = auth.currentUser;
+        if (!user) return;
+        user.getIdToken().then((token) => {
+            sendPost(token, message, selectedRepo?.id).then(() => {
+                setMessage("");
+                setSelectedRepo(null);
+            });
         });
     };
 

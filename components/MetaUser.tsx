@@ -31,9 +31,7 @@ export default function MetaUser({ user }: IProps) {
                     )}
                 </div>
             </div>
-            {id !== currentUserId && (
-                <FollowBtn currentUserId={currentUserId} userId={id} />
-            )}
+            {id !== currentUserId && <FollowBtn userId={id} />}
         </div>
     );
 }

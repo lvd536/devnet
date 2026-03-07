@@ -13,7 +13,7 @@ export default function DProfileControls() {
 
     return (
         <div className="flex self-end items-center gap-2">
-            <FollowBtn currentUserId={currentUserId} userId={userId} />
+            <FollowBtn userId={userId} />
         </div>
     );
 }

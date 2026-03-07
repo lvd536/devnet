@@ -2,6 +2,7 @@
 
 import { adminDb } from "@/lib/firebaseAdmin";
 import { calculateNextLevelXP } from "@/utils/firebaseFunctions";
+import { FieldValue } from "firebase-admin/firestore";
 
 type EventType =
     | "POST_CREATED"
@@ -49,7 +50,7 @@ async function giveBadge(userId: string, badgeId: string) {
     if (snap.exists) return;
 
     await badgeRef.set({
-        awardedAt: Date.now(),
+        awardedAt: FieldValue.serverTimestamp(),
         awardedBy: "system",
     });
 }

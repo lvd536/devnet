@@ -32,7 +32,7 @@ export default function ExploreSearchUser({ user }: IProps) {
                 </div>
             </div>
             {id !== currentUserId && (
-                <FollowBtn currentUserId={currentUserId} userId={id} />
+                <FollowBtn userId={id} />
             )}
         </div>
     );

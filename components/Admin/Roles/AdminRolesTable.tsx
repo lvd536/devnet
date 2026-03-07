@@ -15,7 +15,8 @@ import {
 } from "@/components/ui/table";
 import { MoreHorizontalIcon } from "lucide-react";
 import { IRole } from "@/interfaces/interfaces";
-import { deleteRole } from "@/utils/firebaseFunctions";
+import { auth } from "@/lib/firebase";
+import { deleteRole } from "@/actions/roles";
 
 interface IProps {
     roles: IRole[];
@@ -28,7 +29,13 @@ export function AdminRolesTable({ roles }: IProps) {
                 Пусто...
             </div>
         );
-
+    function handleDeleteRole(roleId: string) {
+        const user = auth.currentUser;
+        if (!user) return;
+        user.getIdToken().then((token) => {
+            deleteRole(token, roleId);
+        });
+    }
     return (
         <>
             <Table>
@@ -87,7 +94,9 @@ export function AdminRolesTable({ roles }: IProps) {
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem
                                             variant="destructive"
-                                            onClick={() => deleteRole(role.id)}
+                                            onClick={() =>
+                                                handleDeleteRole(role.id)
+                                            }
                                         >
                                             Delete
                                         </DropdownMenuItem>

@@ -1,6 +1,7 @@
 "use client";
+import { addLike, deleteLike } from "@/actions/likes";
 import { auth } from "@/lib/firebase";
-import { addLike, deleteLike, getIsLiked } from "@/utils/firebaseFunctions";
+import { getIsLiked } from "@/utils/firebaseFunctions";
 import { Heart, MessageSquareMore } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -22,7 +23,8 @@ export default function PostActions({
 }: IProps) {
     const [isLiked, setIsLiked] = useState<boolean>(false);
     const [pending, setPending] = useState<boolean>(false);
-    const userId = auth.currentUser?.uid;
+    const user = auth.currentUser;
+    const userId = user?.uid;
 
     useEffect(() => {
         let mounted = true;
@@ -44,16 +46,19 @@ export default function PostActions({
     }, [postId, userId]);
 
     const handleToggleLike = async () => {
-        if (!userId) return;
+        if (!user) return;
         if (pending) return;
-
+        
         const newState = !isLiked;
         setIsLiked(newState);
         setPending(true);
 
         try {
-            if (newState) await addLike(postId, userId);
-            else await deleteLike(postId, userId);
+            user.getIdToken().then(async (token) => {
+                if (newState) await addLike(postId, token);
+                else await deleteLike(postId, token);
+            })
+           
         } catch (err) {
             console.error("Like toggle failed:", err);
             setIsLiked(!newState);

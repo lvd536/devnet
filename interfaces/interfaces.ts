@@ -1,4 +1,6 @@
-import type { FieldValue } from "firebase/firestore";
+import type { FieldValue, Timestamp } from "firebase/firestore";
+
+export type FirestoreCreatedAt = FieldValue | Timestamp | number;
 
 export interface IUserProfile {
     id: string;
@@ -21,10 +23,10 @@ export interface IUserProfile {
         followingCount: number;
         projectsCount: number;
         streakDays: number;
-        lastActiveDate?: FieldValue;
+        lastActiveDate?: FirestoreCreatedAt;
     };
 
-    createdAt: FieldValue;
+    createdAt: FirestoreCreatedAt;
 }
 
 export interface IProject {
@@ -37,8 +39,8 @@ export interface IProject {
     stars: number;
     forks: number;
     language: string;
-    updatedAt: number;
-    createdAt: number;
+    updatedAt: FirestoreCreatedAt;
+    createdAt: FirestoreCreatedAt;
 }
 
 export interface IGitHubRepo {
@@ -63,12 +65,12 @@ export interface IPost {
     likesCount: number;
     commentsCount: number;
 
-    createdAt: number;
+    createdAt: FirestoreCreatedAt;
 }
 
 export interface ILike {
     id: string; // userId
-    createdAt: number;
+    createdAt: FirestoreCreatedAt;
 }
 
 export interface IComment {
@@ -77,17 +79,17 @@ export interface IComment {
     authorId: string;
     content: string;
 
-    createdAt: number;
+    createdAt: FirestoreCreatedAt;
 }
 
 export interface IFollower {
     id: string; // follower uid
-    createdAt: number;
+    createdAt: FirestoreCreatedAt;
 }
 
 export interface IFollowing {
     id: string; // followed user uid
-    createdAt: number;
+    createdAt: FirestoreCreatedAt;
 }
 
 export type NotificationType = "like" | "comment" | "follow" | "badge";
@@ -100,12 +102,12 @@ export interface INotification {
     postId?: string;
 
     isRead: boolean;
-    createdAt: number;
+    createdAt: FirestoreCreatedAt;
 }
 
 export interface IUserBadge {
     id: string;
-    awardedAt: number;
+    awardedAt: FirestoreCreatedAt;
     awardedBy: "system" | string;
 }
 
@@ -117,7 +119,7 @@ export interface IBadge {
     icon: string;
     rarity: "common" | "rare" | "epic" | "legendary";
 
-    createdAt: number;
+    createdAt: FirestoreCreatedAt;
 }
 
 export interface IUserSummary {
@@ -125,7 +127,7 @@ export interface IUserSummary {
     username: string;
     githubUsername: string | null;
     avatarUrl: string | null;
-    createdAt?: number | null;
+    createdAt?: FirestoreCreatedAt | null;
     isFollowing?: boolean;
 }
 
@@ -135,5 +137,5 @@ export interface IRole {
     color: string;
     permissions: Array<"admin" | "moderator">;
     priority: number;
-    createdAt: number;
+    createdAt: FieldValue | Timestamp | number;
 }

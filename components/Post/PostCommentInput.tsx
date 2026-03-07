@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { SendHorizonal } from "lucide-react";
 import { auth } from "@/lib/firebase";
-import { addComment } from "@/utils/firebaseFunctions";
+import { addComment } from "@/actions/comments";
 
 interface IProps {
     postId: string;
@@ -12,20 +12,22 @@ interface IProps {
 export default function PostCommentInput({ postId }: IProps) {
     const [message, setMessage] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
-    const userId = auth.currentUser?.uid;
+    const user = auth.currentUser;
 
     const handleSendMessage = () => {
-        if (error || !userId) return;
+        if (error || !user) return;
         if (!message) {
             setError("Вы не написали сообщение");
             return;
         }
-        addComment(userId, postId, message).catch((err) => {
-            setError(err);
+        user.getIdToken().then((token) => {
+            addComment(token, postId, message).catch((err) => {
+                setError(err);
+            });
         });
     };
 
-    if (!userId) return null;
+    if (!user) return null;
 
     return (
         <div className="w-full border-t border-t-border mt-4 p-2 pt-4">

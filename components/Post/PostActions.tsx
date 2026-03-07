@@ -22,6 +22,7 @@ export default function PostActions({
     onComment,
 }: IProps) {
     const [isLiked, setIsLiked] = useState<boolean>(false);
+    const [alreadyLiked, setAlreadyLiked] = useState<boolean>(false);
     const [pending, setPending] = useState<boolean>(false);
     const user = auth.currentUser;
     const userId = user?.uid;
@@ -35,6 +36,7 @@ export default function PostActions({
                 const resp = await getIsLiked(postId, userId);
                 if (!mounted) return;
                 setIsLiked(!!resp);
+                setAlreadyLiked(!!resp);
             } catch (err) {
                 console.error("Failed to get liked status", err);
             }
@@ -48,7 +50,7 @@ export default function PostActions({
     const handleToggleLike = async () => {
         if (!user) return;
         if (pending) return;
-        
+
         const newState = !isLiked;
         setIsLiked(newState);
         setPending(true);
@@ -57,8 +59,7 @@ export default function PostActions({
             user.getIdToken().then(async (token) => {
                 if (newState) await addLike(postId, token);
                 else await deleteLike(postId, token);
-            })
-           
+            });
         } catch (err) {
             console.error("Like toggle failed:", err);
             setIsLiked(!newState);
@@ -81,7 +82,15 @@ export default function PostActions({
                         isLiked && "fill-red-500 stroke-red-500"
                     } transition-all duration-300`}
                 />
-                <span className="text-sm text-text-muted">{likesCount}</span>
+                <span className="text-sm text-text-muted">
+                    {isLiked && alreadyLiked
+                        ? likesCount
+                        : isLiked && !alreadyLiked
+                          ? likesCount + 1
+                          : !isLiked && alreadyLiked
+                            ? likesCount - 1
+                            : likesCount}
+                </span>
             </div>
 
             {commentLink ? (

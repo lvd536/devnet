@@ -7,7 +7,6 @@ import {
     reauthenticateWithPopup,
 } from "firebase/auth";
 import {
-    addDoc,
     collection,
     doc,
     getDoc,
@@ -22,7 +21,6 @@ import {
     orderBy,
     documentId,
     collectionGroup,
-    or,
     startAfter,
     DocumentSnapshot,
     QuerySnapshot,
@@ -47,6 +45,7 @@ import {
 } from "@/interfaces/interfaces";
 import { setUserData, useUserProfileStore } from "@/stores/useProfileStore";
 import { processEvent } from "@/actions/gamification";
+import { updateStreak } from "@/actions/streak";
 
 export async function loginWithGithub(desiredUsername?: string) {
     const provider = new GithubAuthProvider();
@@ -124,6 +123,7 @@ export async function loginWithGithub(desiredUsername?: string) {
                     followersCount: 0,
                     followingCount: 0,
                     streakDays: 0,
+                    lastActiveDate: serverTimestamp(),
                 },
                 createdAt: serverTimestamp(),
             };
@@ -150,6 +150,10 @@ export async function setupUser(user: User) {
         await getDoc(userRef),
         await getDocs(q),
     ]);
+
+    if (!userSnap.exists()) return;
+
+    await updateStreak(user.uid);
 
     setUserData(
         user,

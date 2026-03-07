@@ -21,7 +21,7 @@ export interface IUserProfile {
         followingCount: number;
         projectsCount: number;
         streakDays: number;
-        lastActiveDate?: number;
+        lastActiveDate?: FieldValue;
     };
 
     createdAt: FieldValue;

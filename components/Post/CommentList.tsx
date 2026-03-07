@@ -1,11 +1,13 @@
 import usePostComments from "@/hooks/usePostComments";
 import Comment from "./Comment";
+import { IComment } from "@/interfaces/interfaces";
 
 interface IProps {
     postId: string;
+    localComments: IComment[];
 }
 
-export default function CommentList({ postId }: IProps) {
+export default function CommentList({ postId, localComments }: IProps) {
     const { comments, loading, error } = usePostComments(postId);
 
     if (loading) return <div>Загрузка...</div>;
@@ -21,7 +23,7 @@ export default function CommentList({ postId }: IProps) {
 
     return (
         <div className="flex flex-col gap-2 mt-2">
-            {comments.map((comment) => (
+            {[...comments, ...localComments].map((comment) => (
                 <Comment comment={comment} key={comment.id} />
             ))}
         </div>

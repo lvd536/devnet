@@ -8,10 +8,13 @@ import usePost from "@/hooks/usePost";
 import PostCommentInput from "./PostCommentInput";
 import CommentList from "./CommentList";
 import PostActions from "./PostActions";
+import { IComment } from "@/interfaces/interfaces";
+import { useState } from "react";
 
 export default function DetailedPost() {
     const { id: postId } = useParams<{ id: string }>();
     const { post, project, user, loading, error } = usePost({ postId });
+    const [newComments, setNewComments] = useState<IComment[]>([]);
     const router = useRouter();
 
     if (!post || !user) return null;
@@ -45,12 +48,15 @@ export default function DetailedPost() {
                         <Repository repo={project} className="bg-background" />
                     )}
                     <PostActions
-                        commentsCount={post.commentsCount}
+                        commentsCount={post.commentsCount + newComments.length}
                         likesCount={post.likesCount}
                         postId={post.id}
                     />
-                    <PostCommentInput postId={post.id} />
-                    <CommentList postId={post.id} />
+                    <PostCommentInput
+                        postId={post.id}
+                        setNewComments={setNewComments}
+                    />
+                    <CommentList postId={post.id} localComments={newComments} />
                 </div>
             </div>
         </div>

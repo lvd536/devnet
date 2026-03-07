@@ -4,12 +4,14 @@ import { useState } from "react";
 import { SendHorizonal } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { addComment } from "@/actions/comments";
+import { IComment } from "@/interfaces/interfaces";
 
 interface IProps {
     postId: string;
+    setNewComments: React.Dispatch<React.SetStateAction<IComment[]>>;
 }
 
-export default function PostCommentInput({ postId }: IProps) {
+export default function PostCommentInput({ postId, setNewComments }: IProps) {
     const [message, setMessage] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
     const user = auth.currentUser;
@@ -21,9 +23,21 @@ export default function PostCommentInput({ postId }: IProps) {
             return;
         }
         user.getIdToken().then((token) => {
-            addComment(token, postId, message).catch((err) => {
-                setError(err);
-            });
+            addComment(token, postId, message)
+                .then(() => {
+                    setNewComments((prev) => [
+                        ...prev,
+                        {
+                            id: user.uid + prev.length,
+                            authorId: user.uid,
+                            content: message,
+                            createdAt: new Date().getDate(),
+                        } as IComment,
+                    ]);
+                })
+                .catch((err) => {
+                    setError(err);
+                });
         });
     };
 

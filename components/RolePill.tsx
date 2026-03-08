@@ -4,7 +4,7 @@ import type { IRole } from "@/interfaces/interfaces";
 import { getContrastTextColor } from "@/utils/colorConverter";
 
 type Variant = "solid" | "outline" | "ghost";
-type Size = "sm" | "md" | "lg";
+type Size = "xs" | "sm" | "md" | "lg";
 
 interface RolePillProps {
     role: IRole;
@@ -26,6 +26,7 @@ export default function RolePill({
     const textColor = useMemo(() => getContrastTextColor(color), [color]);
 
     const sizes: Record<Size, { font: string; px: string; dot: number }> = {
+        xs: { font: "text-[10px]", px: "px-1.5 py-0.5", dot: 6 },
         sm: { font: "text-xs", px: "px-2 py-0.5", dot: 8 },
         md: { font: "text-sm", px: "px-3 py-1", dot: 10 },
         lg: { font: "text-base", px: "px-4 py-1.5", dot: 12 },

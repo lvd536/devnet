@@ -40,6 +40,7 @@ export default function DetailedPost() {
                         githubUsername={user.githubUsername}
                         createdAt={post.createdAt}
                         userId={user.id}
+                        role={user.role}
                     />
                 </div>
                 <div className="flex w-full flex-col gap-1">

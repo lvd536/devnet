@@ -78,7 +78,7 @@ export default function PostActions({
                 aria-hidden
             >
                 <Heart
-                    className={`w-5 h-5 text-text-muted fill-amber-50/0 ${
+                    className={`w-4.5 h-4.5 text-text-muted fill-amber-50/0 ${
                         isLiked && "fill-red-500 stroke-red-500"
                     } transition-all duration-300`}
                 />
@@ -99,14 +99,14 @@ export default function PostActions({
                     className="flex items-center gap-2"
                     onClick={onComment}
                 >
-                    <MessageSquareMore className="w-5 h-5 text-text-muted" />
+                    <MessageSquareMore className="w-4.5 h-4.5 text-text-muted" />
                     <span className="text-sm text-text-muted">
                         {commentsCount}
                     </span>
                 </Link>
             ) : (
                 <div className="flex items-center gap-2" onClick={onComment}>
-                    <MessageSquareMore className="w-5 h-5 text-text-muted" />
+                    <MessageSquareMore className="w-4.5 h-4.5 text-text-muted" />
                     <span className="text-sm text-text-muted">
                         {commentsCount}
                     </span>

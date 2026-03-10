@@ -36,13 +36,13 @@ export default function PostCredits({
                         </div>
                     )}
                 </h3>
-                <p className="flex text-xs text-neutral-400 mt-0.5">
+                <div className="flex text-xs text-neutral-400 mt-0.5">
                     @{username}
                     <div className="flex gap-2 ml-2 items-center justify-center">
                         <div className="w-0.75 h-0.75 bg-text-secondary/50 rounded-full" />
                         {formatFirestoreDate(createdAt)}
                     </div>
-                </p>
+                </div>
             </Link>
 
             <div className="text-xs text-neutral-400">

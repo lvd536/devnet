@@ -13,7 +13,7 @@ export default function Repository({ repo, className, onClick }: IProps) {
             href={repo.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`mt-1 group block w-full rounded-lg border border-neutral-700/40 bg-neutral-900/40 hover:bg-neutral-900/60 transition p-3 ${className}`}
+            className={`mt-1 group block w-full rounded-lg border border-neutral-700/25 bg-neutral-900/30 hover:bg-neutral-900/60 transition p-3 ${className}`}
             aria-label={`Открыть репозиторий ${repo.repoName} на GitHub`}
             onClick={onClick}
         >

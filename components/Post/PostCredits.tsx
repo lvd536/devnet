@@ -7,7 +7,7 @@ import RolePill from "../RolePill";
 interface IProps {
     username: string;
     githubUsername: string | null;
-    createdAt: FirestoreCreatedAt;
+    createdAt: FirestoreCreatedAt | string;
     userId: string;
     role?: IRole;
 }
@@ -40,7 +40,9 @@ export default function PostCredits({
                     @{username}
                     <div className="flex gap-2 ml-2 items-center justify-center">
                         <div className="w-0.75 h-0.75 bg-text-secondary/50 rounded-full" />
-                        {formatFirestoreDate(createdAt)}
+                        {typeof createdAt === "string"
+                            ? createdAt
+                            : formatFirestoreDate(createdAt)}
                     </div>
                 </div>
             </Link>

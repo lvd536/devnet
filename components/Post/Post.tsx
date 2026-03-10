@@ -1,3 +1,4 @@
+"use client";
 import { IPost } from "@/interfaces/interfaces";
 import Repository from "../Repository";
 import usePostData from "@/hooks/usePostData";

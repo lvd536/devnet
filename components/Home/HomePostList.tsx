@@ -1,3 +1,4 @@
+"use client";
 import { IPost } from "@/interfaces/interfaces";
 import Post from "../Post/Post";
 

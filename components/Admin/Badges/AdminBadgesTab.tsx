@@ -2,11 +2,12 @@
 import { AdminBadgesTable } from "./AdminBadgesTable";
 import AdminBadgeCreation from "./AdminBadgeCreation";
 import useBadges from "@/hooks/useBadges";
+import { AdminBadgesSkeleton } from "@/components/Skeletons/Admin/AdminBadgesSkeleton";
 
 export default function AdminBadgesTab() {
     const { badges, loading, error } = useBadges();
 
-    if (loading) return <div>Загрузка...</div>;
+    if (loading) return <AdminBadgesSkeleton />;
 
     if (error) return null;
 

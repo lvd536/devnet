@@ -1,6 +1,7 @@
 import usePostComments from "@/hooks/usePostComments";
 import Comment from "./Comment";
 import { IComment } from "@/interfaces/interfaces";
+import { CommentListSkeleton } from "../Skeletons/Post/CommentListSkeleton";
 
 interface IProps {
     postId: string;
@@ -10,7 +11,7 @@ interface IProps {
 export default function CommentList({ postId, localComments }: IProps) {
     const { comments, loading, error } = usePostComments(postId);
 
-    if (loading) return <div>Загрузка...</div>;
+    if (loading) return <CommentListSkeleton />;
 
     if (error) return null;
 

@@ -1,5 +1,6 @@
 "use client";
 import Post from "@/components/Post/Post";
+import { ProfilePostsSkeleton } from "@/components/Skeletons/Profile/ProfilePostsSkeleton";
 import useProfilePosts from "@/hooks/useProfilePosts";
 import { auth } from "@/lib/firebase";
 import { useParams } from "next/navigation";
@@ -9,7 +10,7 @@ export default function ProfilePostList() {
         userId: userId ?? auth.currentUser!.uid,
     });
 
-    if (loading) return <div>Загрузка...</div>;
+    if (loading) return <ProfilePostsSkeleton />;
     if (error) return <div>{error}</div>;
     if (!posts) return <div>Постов нет</div>;
 

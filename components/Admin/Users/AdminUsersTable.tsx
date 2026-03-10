@@ -27,11 +27,10 @@ import AdminUserBadgesEdit from "./AdminUserBadgesEdit";
 interface IProps {
     userId: string;
     users: IUserProfile[] | undefined;
-    loading: boolean;
     error: string | null;
 }
 
-export function AdminUsersTable({ users, loading, error, userId }: IProps) {
+export function AdminUsersTable({ users, error, userId }: IProps) {
     const [editingUser, setEditingUser] = useState<IUserProfile | null>(null);
     const [editingUserBadges, setEditingUserBadges] = useState<boolean>(false);
     const {
@@ -40,7 +39,7 @@ export function AdminUsersTable({ users, loading, error, userId }: IProps) {
         error: userBadgesError,
     } = useUserBadges({ userId });
 
-    if (loading || userBadgesLoading) return <div>Загрузка...</div>;
+    if (userBadgesLoading) return <div>Загрузка бейджев...</div>;
     if (!users || error || userBadgesError) return null;
 
     return (

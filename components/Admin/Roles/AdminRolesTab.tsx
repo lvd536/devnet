@@ -2,11 +2,12 @@
 import useRoles from "@/hooks/useRoles";
 import AdminRoleCreation from "./AdminRoleCreation";
 import { AdminRolesTable } from "./AdminRolesTable";
+import { AdminRolesSkeleton } from "@/components/Skeletons/Admin/AdminRolesSkeleton";
 
 export default function AdminRolesTab() {
     const { roles, loading, error } = useRoles();
 
-    if (loading) return <div>Загрузка...</div>;
+    if (loading) return <AdminRolesSkeleton />;
 
     if (error || roles === undefined) return null;
 

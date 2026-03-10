@@ -7,6 +7,7 @@ import { browserRoutes } from "@/consts/browserRoutes";
 import PostCredits from "./PostCredits";
 import PostAvatar from "./PostAvatar";
 import PostActions from "./PostActions";
+import { DetailedPostSkeleton } from "../Skeletons/Post/DetailedPostSkeleton";
 interface IProps {
     post: IPost;
 }
@@ -15,7 +16,7 @@ export default function Post({ post }: IProps) {
     const { project, user, loading, error } = usePostData({ post });
 
     if (!user) return null;
-    if (loading) return <div>Загрузка...</div>;
+    if (loading) return <DetailedPostSkeleton />;
     if (error) return <div>{error}</div>;
 
     return (

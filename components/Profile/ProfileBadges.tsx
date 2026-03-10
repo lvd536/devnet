@@ -3,6 +3,7 @@ import { Badge } from "../Badge";
 import { badgeIcons } from "@/utils/badgeIcons";
 import useBadges from "@/hooks/useBadges";
 import { Flame } from "lucide-react";
+import { ProfileBadgesSkeleton } from "../Skeletons/Profile/ProfileBadgesSkeleton";
 
 interface IProps {
     userId: string;
@@ -16,7 +17,9 @@ export default function ProfileBadges({ userId, streak }: IProps) {
         error: userBadgesError,
     } = useUserBadges({ userId });
     const { badges, loading: badgesLoading, error: badgesError } = useBadges();
-    if (userBadgesLoading || badgesLoading) return <div>Загрузка...</div>;
+
+    if (userBadgesLoading || badgesLoading)
+        return <ProfileBadgesSkeleton count={4} />;
 
     if (userBadgesError || badgesError || !userBadges || !badges) return null;
 

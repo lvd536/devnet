@@ -2,12 +2,12 @@ import HomeFollowing from "@/components/Home/HomeFollowing";
 import HomeNavigation from "@/components/Home/HomeNavigation";
 import HomePostList from "@/components/Home/HomePostList";
 import PostCreation from "@/components/Post/PostCreation";
+import { HomeFeedSkeleton } from "@/components/Skeletons/Home/HomeFeedSkeleton";
 import { IPost } from "@/interfaces/interfaces";
 import { formatFirestoreDate } from "@/utils/dateConverter";
 import { getAllPosts, getFollowingIds } from "@/utils/firebaseFunctions";
 import { cookies } from "next/headers";
-
-export const dynamic = "force-dynamic";
+import { Suspense } from "react";
 
 export default async function Home({
     searchParams,
@@ -29,17 +29,20 @@ export default async function Home({
     const followingPosts = serializablePosts.filter((post) =>
         followingIds?.includes(post.authorId),
     );
+
     return (
-        <div className="flex flex-col gap-2">
-            <HomeNavigation />
-            <div className="flex flex-col gap-2 items-center justify-center">
-                <PostCreation />
-                {page === "following" ? (
-                    <HomeFollowing posts={followingPosts} />
-                ) : (
-                    <HomePostList posts={serializablePosts} />
-                )}
+        <Suspense fallback={<HomeFeedSkeleton />}>
+            <div className="flex flex-col gap-2">
+                <HomeNavigation />
+                <div className="flex flex-col gap-2 items-center justify-center">
+                    <PostCreation />
+                    {page === "following" ? (
+                        <HomeFollowing posts={followingPosts} />
+                    ) : (
+                        <HomePostList posts={serializablePosts} />
+                    )}
+                </div>
             </div>
-        </div>
+        </Suspense>
     );
 }

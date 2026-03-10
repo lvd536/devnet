@@ -3,6 +3,7 @@ import PostAvatar from "./PostAvatar";
 import useUserProfile from "@/hooks/useUserProfile";
 import Link from "next/link";
 import { browserRoutes } from "@/consts/browserRoutes";
+import { CommentSkeleton } from "../Skeletons/Post/CommentSkeleton";
 
 interface IProps {
     comment: IComment;
@@ -11,7 +12,7 @@ interface IProps {
 export default function Comment({ comment }: IProps) {
     const { userProfile, loading, error } = useUserProfile(comment.authorId);
 
-    if (loading) return <div>Загрузка...</div>;
+    if (loading) return <CommentSkeleton />;
 
     if (!userProfile || error) return null;
 

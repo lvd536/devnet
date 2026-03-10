@@ -4,6 +4,7 @@ import useProfileMeta from "@/hooks/useProfileMeta";
 import { useState } from "react";
 import BaseModal from "../Modals/BaseModal";
 import MetaUser from "../MetaUser";
+import { ProfileMetaSkeleton } from "../Skeletons/Profile/ProfileMetaSkeleton";
 
 interface IProps {
     followersCount: number;
@@ -27,7 +28,7 @@ export default function ProfileMeta({
     const [isFollowingsModalOpen, setIsFollowingsModalOpen] =
         useState<boolean>(false);
 
-    if (loading) return <div>Загрузка...</div>;
+    if (loading) return <ProfileMetaSkeleton />;
 
     return (
         <>

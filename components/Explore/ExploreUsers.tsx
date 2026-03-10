@@ -3,17 +3,14 @@ import ExploreSearchUser from "./ExploreSearchUser";
 
 interface IProps {
     users: IUserProfile[] | undefined;
-    loading: boolean;
     error: string | null;
 }
 
-export default function ExploreUsers({ users, loading, error }: IProps) {
-    if (loading || error || !users || users.length < 1)
+export default function ExploreUsers({ users, error }: IProps) {
+    if (error || !users || users.length < 1)
         return (
             <div className="font-semibold text-text-muted">
-                {loading
-                    ? "Загрузка..."
-                    : error
+                {error
                       ? error
                       : !users || users.length < 1
                         ? "Пусто"

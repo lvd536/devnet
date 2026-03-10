@@ -2,6 +2,7 @@ import Post from "@/components/Post/Post";
 import useLikes from "@/hooks/useLikes";
 import { auth } from "@/lib/firebase";
 import { useParams } from "next/navigation";
+import { ProfilePostsSkeleton } from "../Skeletons/Profile/ProfilePostsSkeleton";
 
 export default function ProfileLikes() {
     const { userId } = useParams<{ userId: string }>();
@@ -9,7 +10,7 @@ export default function ProfileLikes() {
         userId: userId ?? auth.currentUser!.uid,
     });
 
-    if (loading) return <div>Загрузка...</div>;
+    if (loading) return <ProfilePostsSkeleton />;
     if (error) return <div>{error}</div>;
     if (!likedPosts || likedPosts.length < 1)
         return (

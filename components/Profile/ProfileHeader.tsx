@@ -9,13 +9,14 @@ import { useParams } from "next/navigation";
 import DProfileControls from "./Dynamic/DProfileControls";
 import ProfileExpBar from "./ProfileExpBar";
 import ProfileBadges from "./ProfileBadges";
+import { ProfileHeaderSkeleton } from "../Skeletons/Profile/ProfileHeaderSkeleton";
 
 export default function ProfileHeader() {
     const { userId } = useParams<{ userId: string }>();
     const { userProfile, loading, error } = useUserProfile(userId);
     const { profile, user } = useUserProfileStore();
 
-    if (loading) return <div>Загрузка...</div>;
+    if (loading) return <ProfileHeaderSkeleton />;
 
     if (!profile || !user || error) return null;
 

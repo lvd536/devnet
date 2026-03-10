@@ -1,5 +1,4 @@
 import { IBadge } from "@/interfaces/interfaces";
-import { Button } from "@/components/ui/button";
 import {
     HoverCard,
     HoverCardContent,
@@ -13,6 +12,7 @@ interface IProps {
     title: string;
     description: string;
     size?: "sm" | "md" | "lg";
+    color?: string;
 }
 
 export function Badge({
@@ -21,6 +21,7 @@ export function Badge({
     title,
     description,
     size,
+    color,
 }: IProps) {
     const rarityStyles = {
         common: "bg-zinc-800 border-zinc-600",
@@ -42,13 +43,14 @@ export function Badge({
               ${rarity === "legendary" && "animate-pulse"}
             `}
                 >
-                    <Icon size={size === "sm" ? 18 : 20} />
+                    <Icon size={size === "sm" ? 18 : 20} color={color} />
                 </div>
             </HoverCardTrigger>
             <HoverCardContent className="flex w-64 flex-col gap-0.5 bg-background">
                 <div className="flex gap-4 items-center justify-start">
                     <div
                         className={`
+                  shrink-0
                   w-10 h-10
                   flex items-center justify-center
                   rounded-lg
@@ -57,7 +59,7 @@ export function Badge({
                   ${rarity === "legendary" && "animate-pulse"}
                 `}
                     >
-                        <Icon size={20} />
+                        <Icon size={20} color={color} />
                     </div>
                     <div className="flex flex-col justify-center">
                         <p>{title}</p>

@@ -63,7 +63,7 @@ export default function ProfileHeader() {
                 targetUserId={id || user.uid}
             />
             <ProfileExpBar level={level} xp={xp} />
-            <ProfileBadges userId={id} />
+            <ProfileBadges userId={id} streak={stats.streakDays} />
         </>
     );
 }

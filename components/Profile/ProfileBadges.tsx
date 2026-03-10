@@ -2,12 +2,14 @@ import useUserBadges from "@/hooks/useUserBadges";
 import { Badge } from "../Badge";
 import { badgeIcons } from "@/utils/badgeIcons";
 import useBadges from "@/hooks/useBadges";
+import { Flame } from "lucide-react";
 
 interface IProps {
     userId: string;
+    streak?: number;
 }
 
-export default function ProfileBadges({ userId }: IProps) {
+export default function ProfileBadges({ userId, streak }: IProps) {
     const {
         userBadges,
         loading: userBadgesLoading,
@@ -34,6 +36,27 @@ export default function ProfileBadges({ userId }: IProps) {
                     />
                 );
             })}
+            {streak && (
+                <Badge
+                    key={"streak-badge"}
+                    icon={Flame}
+                    description={
+                        "Посещайте нас каждый день и увеличивайте серию!"
+                    }
+                    rarity={
+                        streak > 30
+                            ? "rare"
+                            : streak > 50
+                              ? "epic"
+                              : streak > 100
+                                ? "legendary"
+                                : "common"
+                    }
+                    title={`Серия - ${streak}`}
+                    size="sm"
+                    color="#FF4500"
+                />
+            )}
         </div>
     );
 }

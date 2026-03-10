@@ -19,11 +19,20 @@ export default function ProfileHeader() {
 
     if (!profile || !user || error) return null;
 
-    const date = (
-        userProfile
-            ? (userProfile.createdAt as Timestamp)
-            : (profile.createdAt as Timestamp)
-    ).toDate();
+    const {
+        username,
+        githubUsername,
+        role,
+        level,
+        stats,
+        xp,
+        avatarUrl,
+        roles,
+        id,
+        createdAt,
+    } = userProfile || profile;
+
+    const date = (createdAt as Timestamp).toDate();
 
     return (
         <>
@@ -32,56 +41,29 @@ export default function ProfileHeader() {
                 <div className="absolute -bottom-10 inset-x-5 flex justify-between">
                     <div className="relative">
                         <ProfileAvatar
-                            githubUsername={
-                                userProfile
-                                    ? userProfile.githubUsername
-                                    : profile.githubUsername
-                            }
-                            username={
-                                userProfile
-                                    ? userProfile.username
-                                    : profile.username
-                            }
-                            avatarUrl={
-                                userProfile
-                                    ? userProfile.avatarUrl
-                                    : profile.avatarUrl
-                            }
+                            githubUsername={githubUsername}
+                            username={username}
+                            avatarUrl={avatarUrl}
                         />
                         <div className="absolute -right-1.25 -bottom-1.25 w-7 h-7 rounded-full flex items-center justify-center text-[10px] text-center font-bold bg-linear-to-br from-cyan-500 to-indigo-600 shadow">
-                            Lv {userProfile ? userProfile.level : profile.level}
+                            Lv {level}
                         </div>
                     </div>
                     {userProfile ? <DProfileControls /> : <ProfileControls />}
                 </div>
             </div>
             <ProfileCredits
-                githubUsername={
-                    userProfile
-                        ? userProfile.githubUsername
-                        : profile.githubUsername
-                }
-                username={userProfile ? userProfile.username : profile.username}
-                followersCount={
-                    userProfile
-                        ? userProfile.stats.followersCount
-                        : profile.stats.followersCount
-                }
-                followingCount={
-                    userProfile
-                        ? userProfile.stats.followingCount
-                        : profile.stats.followingCount
-                }
-                role={userProfile ? userProfile.role : profile.role}
-                roles={userProfile ? userProfile.roles : profile.roles}
+                githubUsername={githubUsername}
+                username={username}
+                followersCount={stats.followersCount}
+                followingCount={stats.followingCount}
+                role={role}
+                roles={roles}
                 registerDate={date}
-                targetUserId={userProfile ? userProfile.id! : user.uid}
+                targetUserId={id || user.uid}
             />
-            <ProfileExpBar
-                level={userProfile ? userProfile.level : profile.level}
-                xp={userProfile ? userProfile.xp : profile.xp}
-            />
-            <ProfileBadges userId={userProfile ? userProfile.id : profile.id} />
+            <ProfileExpBar level={level} xp={xp} />
+            <ProfileBadges userId={id} />
         </>
     );
 }

@@ -6,7 +6,6 @@ import { IPost } from "@/interfaces/interfaces";
 import { formatFirestoreDate } from "@/utils/dateConverter";
 import { getAllPosts, getFollowingIds } from "@/utils/firebaseFunctions";
 import { cookies } from "next/headers";
-import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 

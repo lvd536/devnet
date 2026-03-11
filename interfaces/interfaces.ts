@@ -139,3 +139,22 @@ export interface IRole {
     priority: number;
     createdAt: FieldValue | Timestamp | number;
 }
+
+export interface IUserBanner {
+    id: string;
+    awardedAt: FirestoreCreatedAt;
+    awardedBy: "system" | string;
+}
+
+export interface IBanner {
+    id: string;
+    title: string;
+    description: string;
+
+    colors: {
+        gradientA: string;
+        gradientB: string;
+    };
+    condition: string;
+    createdAt: FirestoreCreatedAt;
+}

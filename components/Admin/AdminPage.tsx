@@ -5,10 +5,11 @@ import AdminNavigation from "./AdminNavigation";
 import AdminUsersTab from "./Users/AdminUsersTab";
 import AdminRolesTab from "./Roles/AdminRolesTab";
 import AdminBadgesTab from "./Badges/AdminBadgesTab";
+import AdminBannersTab from "./Banners/AdminBannersTab";
 
 export default function AdminPage() {
     const [currentPage, setCurrentPage] = useState<
-        "users" | "roles" | "badges"
+        "users" | "roles" | "badges" | "banners"
     >("users");
 
     return (
@@ -21,6 +22,7 @@ export default function AdminPage() {
                 {currentPage === "users" && <AdminUsersTab />}
                 {currentPage === "roles" && <AdminRolesTab />}
                 {currentPage === "badges" && <AdminBadgesTab />}
+                {currentPage === "banners" && <AdminBannersTab />}
             </div>
         </div>
     );

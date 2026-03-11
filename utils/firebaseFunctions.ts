@@ -28,6 +28,7 @@ import {
 import { auth, db } from "@/lib/firebase";
 import {
     IBadge,
+    IBanner,
     IComment,
     IFollower,
     IFollowing,
@@ -772,4 +773,15 @@ export async function getUserBadges(userId: string) {
               id: doc.id,
               ...doc.data(),
           })) as IUserBadge[]);
+}
+
+export async function getBanners(): Promise<IBanner[] | undefined> {
+    const bannersRef = collection(db, "banners");
+    const bannersSnap = await getDocs(bannersRef);
+
+    if (bannersSnap.empty) return undefined;
+    else
+        return bannersSnap.docs.map(
+            (doc) => ({ id: doc.id, ...doc.data() }) as IBanner,
+        );
 }

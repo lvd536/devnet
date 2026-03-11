@@ -10,6 +10,7 @@ import DProfileControls from "./Dynamic/DProfileControls";
 import ProfileExpBar from "./ProfileExpBar";
 import ProfileBadges from "./ProfileBadges";
 import { ProfileHeaderSkeleton } from "../Skeletons/Profile/ProfileHeaderSkeleton";
+import ProfileBanner from "./ProfileBanner";
 
 export default function ProfileHeader() {
     const { userId } = useParams<{ userId: string }>();
@@ -21,6 +22,7 @@ export default function ProfileHeader() {
     if (!profile || !user || error) return null;
 
     const {
+        banner,
         username,
         githubUsername,
         role,
@@ -38,7 +40,7 @@ export default function ProfileHeader() {
     return (
         <>
             <div className="relative w-full">
-                <div className="w-full h-50 bg-linear-to-r from-violet-600 to-indigo-600 rounded-2xl" />
+                <ProfileBanner userId={userId ?? user.uid} currentBanner={banner} />
                 <div className="absolute -bottom-10 inset-x-5 flex justify-between">
                     <div className="relative">
                         <ProfileAvatar

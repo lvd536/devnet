@@ -38,6 +38,7 @@ import {
     IProject,
     IRole,
     IUserBadge,
+    IUserBanner,
     IUserProfile,
     IUserSummary,
 } from "@/interfaces/interfaces";
@@ -784,4 +785,15 @@ export async function getBanners(): Promise<IBanner[] | undefined> {
         return bannersSnap.docs.map(
             (doc) => ({ id: doc.id, ...doc.data() }) as IBanner,
         );
+}
+
+export async function getUserBanners(userId: string) {
+    const banners = await getDocs(collection(db, "users", userId, "banners"));
+
+    return banners.empty
+        ? undefined
+        : (banners.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+          })) as IUserBanner[]);
 }

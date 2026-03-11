@@ -23,6 +23,8 @@ import { useState } from "react";
 import { deleteUser } from "@/utils/firebaseFunctions";
 import useUserBadges from "@/hooks/useUserBadges";
 import AdminUserBadgesEdit from "./AdminUserBadgesEdit";
+import useUserBanners from "@/hooks/useUserBanners";
+import AdminUserBannersEdit from "./AdminUserBannersEdit";
 
 interface IProps {
     userId: string;
@@ -33,14 +35,22 @@ interface IProps {
 export function AdminUsersTable({ users, error, userId }: IProps) {
     const [editingUser, setEditingUser] = useState<IUserProfile | null>(null);
     const [editingUserBadges, setEditingUserBadges] = useState<boolean>(false);
+    const [editingUserBanners, setEditingUserBanners] =
+        useState<boolean>(false);
     const {
         userBadges,
         loading: userBadgesLoading,
         error: userBadgesError,
     } = useUserBadges({ userId });
+    const {
+        userBanners,
+        loading: userBannersLoading,
+        error: userBannersError,
+    } = useUserBanners({ userId });
 
-    if (userBadgesLoading) return <div>Загрузка бейджев...</div>;
-    if (!users || error || userBadgesError) return null;
+    if (userBadgesLoading || userBannersLoading)
+        return <div>Загрузка бейджев...</div>;
+    if (!users || error || userBadgesError || userBannersError) return null;
 
     return (
         <>
@@ -116,6 +126,18 @@ export function AdminUsersTable({ users, error, userId }: IProps) {
                                                 Edit badges
                                             </button>
                                         </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setEditingUserBanners(true);
+                                                }}
+                                                className="w-full text-left"
+                                            >
+                                                Edit banners
+                                            </button>
+                                        </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                             variant="destructive"
@@ -145,6 +167,15 @@ export function AdminUsersTable({ users, error, userId }: IProps) {
                     open={Boolean(editingUserBadges)}
                     onOpenChange={(open) => {
                         if (!open) setEditingUserBadges(false);
+                    }}
+                />
+            )}
+            {editingUserBanners && (
+                <AdminUserBannersEdit
+                    userBanners={userBanners}
+                    open={Boolean(editingUserBanners)}
+                    onOpenChange={(open) => {
+                        if (!open) setEditingUserBanners(false);
                     }}
                 />
             )}

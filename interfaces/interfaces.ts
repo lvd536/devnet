@@ -14,6 +14,8 @@ export interface IUserProfile {
     role: IRole; // primary role
     roles?: IRole[]; // дополнительные
 
+    banner?: IBanner | null;
+
     stats: {
         postsCount: number;
         likesReceived: number;

@@ -177,8 +177,7 @@ export async function checkBanners(userId: string) {
 
 export async function setUserBanner(idToken: string, banner?: IBanner | null) {
     try {
-        const { isAdmin, uid } = await getIsAdmin(idToken);
-        if (!isAdmin) return;
+        const { uid } = await getIsAdmin(idToken);
 
         const userRef = adminDb.doc(`users/${uid}`);
         await userRef.update({ banner });

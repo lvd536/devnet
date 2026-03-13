@@ -1,9 +1,7 @@
 "use client";
 
 import useProfileMeta from "@/hooks/useProfileMeta";
-import { useState } from "react";
-import BaseModal from "../Modals/BaseModal";
-import MetaUser from "../MetaUser";
+import MetaModal from "../Modals/MetaModal";
 import { ProfileMetaSkeleton } from "../Skeletons/Profile/ProfileMetaSkeleton";
 
 interface IProps {
@@ -23,57 +21,29 @@ export default function ProfileMeta({
         currentUserId,
         targetUserId,
     });
-    const [isFollowersModalOpen, setIsFollowersModalOpen] =
-        useState<boolean>(false);
-    const [isFollowingsModalOpen, setIsFollowingsModalOpen] =
-        useState<boolean>(false);
 
     if (loading) return <ProfileMetaSkeleton />;
 
     return (
         <>
             <div className="flex gap-4 items-center justify-start">
-                <div
-                    className="flex gap-1.5"
-                    onClick={() => setIsFollowersModalOpen(true)}
-                >
+                <div className="flex items-center gap-1.5">
                     <p>{followersCount}</p>
-                    <p className="text-text-secondary">подписчиков</p>
+                    <MetaModal
+                        label="Подписчики"
+                        users={followers}
+                        triggerLabel="подписчиков"
+                    />
                 </div>
-                <div
-                    className="flex gap-1.5"
-                    onClick={() => setIsFollowingsModalOpen(true)}
-                >
+                <div className="flex items-center gap-1.5">
                     <p>{followingCount}</p>
-                    <p className="text-text-secondary">подписок</p>
+                    <MetaModal
+                        label="Подписки"
+                        users={followings}
+                        triggerLabel="подписок"
+                    />
                 </div>
             </div>
-            {isFollowersModalOpen && !isFollowingsModalOpen && (
-                <BaseModal
-                    label="Подписчики"
-                    elements={
-                        followers
-                            ? followers.map((user) => (
-                                  <MetaUser key={user.id} user={user} />
-                              ))
-                            : []
-                    }
-                    onClose={() => setIsFollowersModalOpen(false)}
-                />
-            )}
-            {isFollowingsModalOpen && !isFollowersModalOpen && (
-                <BaseModal
-                    label="Подписки"
-                    elements={
-                        followings
-                            ? followings.map((user) => (
-                                  <MetaUser key={user.id} user={user} />
-                              ))
-                            : []
-                    }
-                    onClose={() => setIsFollowingsModalOpen(false)}
-                />
-            )}
         </>
     );
 }

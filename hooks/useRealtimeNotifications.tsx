@@ -13,6 +13,7 @@ import {
     limit,
     getDoc,
     deleteDoc,
+    or,
 } from "firebase/firestore";
 import { sendToast } from "@/utils/toast";
 import { db } from "@/lib/firebase";
@@ -34,9 +35,13 @@ export default function useRealtimeNotifications(userId?: string) {
         }
 
         const col = collection(db, "notifications");
+
         const q = query(
             col,
-            where("toUserId", "==", userId),
+            or(
+                where("toUserId", "==", userId),
+                where("toUserId", "==", "system"),
+            ),
             orderBy("createdAt", "desc"),
             limit(200),
         );
@@ -182,6 +187,6 @@ export default function useRealtimeNotifications(userId?: string) {
         toggleRead,
         markAllRead,
         clearAll,
-        deleteNotify
+        deleteNotify,
     };
 }

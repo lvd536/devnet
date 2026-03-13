@@ -4,6 +4,7 @@ import { auth } from "@/lib/firebase";
 import { useUserProfileStore } from "@/stores/useProfileStore";
 import { handleSync } from "@/utils/firebaseFunctions";
 import { RefreshCcw, LogOut } from "lucide-react";
+import { ProfileEdit } from "../Modals/ProfileEdit";
 
 export default function ProfileControls() {
     const { setProfile, setRepositories, setUser } = useUserProfileStore();
@@ -22,12 +23,7 @@ export default function ProfileControls() {
 
     return (
         <div className="flex self-end items-center gap-2">
-            <button
-                type="button"
-                className="rounded-full bg-text text-background p-2 font-semibold text-xs"
-            >
-                Редактировать
-            </button>
+            <ProfileEdit />
             <RefreshCcw
                 width={32}
                 height={32}

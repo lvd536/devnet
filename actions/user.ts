@@ -30,3 +30,18 @@ export async function getIsAdmin(idToken: string) {
 
     return { uid, isAdmin };
 }
+
+export async function editUserCredits(
+    idToken: string,
+    username: string,
+    displayName: string,
+) {
+    const { uid } = await getIsAdmin(idToken);
+    const userDoc = adminDb.doc(`users/${uid}`);
+    const userSnap = await userDoc.get();
+    if (!userSnap.exists) return;
+    await userDoc.update({
+        username,
+        githubUsername: displayName,
+    });
+}

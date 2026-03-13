@@ -33,7 +33,7 @@ export default function NotificationsPage() {
                         title="Отметить всё как прочитанное"
                     >
                         <Check className="w-4 h-4 mr-2" />
-                        Отметить всё
+                        <p className="max-sm:hidden">Отметить всё</p>
                         {unreadCount ? (
                             <span className="ml-2 text-sm text-muted-foreground">
                                 ({unreadCount})

@@ -1,8 +1,9 @@
 "use server";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { processEvent } from "./gamification";
-import { IUserProfile } from "@/interfaces/interfaces";
+import { INotification, IPost, IUserProfile } from "@/interfaces/interfaces";
 import { FieldValue } from "firebase-admin/firestore";
+import { addNotification } from "./notifications";
 
 export async function addComment(
     idToken: string,
@@ -48,6 +49,25 @@ export async function addComment(
             tx.update(userRef, {
                 "stats.commentsCount": FieldValue.increment(1),
             });
+
+            const postCreatorSnap = await adminDb
+                .doc(`users/${(postSnap.data() as IPost).authorId}`)
+                .get();
+            if (postCreatorSnap.exists) {
+                const targetId = postCreatorSnap.id;
+                const senderUsername = (userSnap.data() as IUserProfile)
+                    .username;
+                const notify: Omit<INotification, "id"> = {
+                    title: `Новый комментарий от ${senderUsername}`,
+                    description: message,
+                    icon: "comment",
+                    isRead: false,
+                    toUserId: targetId,
+                    type: "comment",
+                    createdAt: FieldValue.serverTimestamp(),
+                };
+                addNotification(notify);
+            }
         });
         processEvent(uid, "POST_COMMENT");
     } catch (err) {

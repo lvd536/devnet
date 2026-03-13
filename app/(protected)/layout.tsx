@@ -7,6 +7,7 @@ import { auth } from "@/lib/firebase";
 import { browserRoutes } from "@/consts/browserRoutes";
 import NavBar from "@/components/NavBar";
 import { setupUser } from "@/utils/firebaseFunctions";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default function ProtectedLayout({
     children,
@@ -42,7 +43,7 @@ export default function ProtectedLayout({
         <>
             <NavBar />
             <main className="w-full max-w-175 h-full mt-2 max-lg:mx-2 lg:mt-10">
-                {children}
+                <TooltipProvider>{children}</TooltipProvider>
             </main>
         </>
     );

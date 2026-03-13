@@ -1,8 +1,9 @@
 "use server";
 
-import { IUserProfile } from "@/interfaces/interfaces";
+import { INotification, IUserProfile } from "@/interfaces/interfaces";
 import { adminDb } from "@/lib/firebaseAdmin";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
+import { addNotification } from "./notifications";
 
 export async function updateStreak(userId: string) {
     const userRef = adminDb.doc(`users/${userId}`);
@@ -42,10 +43,23 @@ export async function updateStreak(userId: string) {
 
     if (diffInDays === 1) {
         const newStreak = user.stats.streakDays + 1;
-        await userRef.update({
-            "stats.lastActiveDate": FieldValue.serverTimestamp(),
-            "stats.streakDays": FieldValue.increment(1),
-        });
+        userRef
+            .update({
+                "stats.lastActiveDate": FieldValue.serverTimestamp(),
+                "stats.streakDays": FieldValue.increment(1),
+            })
+            .then(() => {
+                const notify: Omit<INotification, "id"> = {
+                    title: `Серия обновлена!`,
+                    description: `Теперь она равна ${newStreak}`,
+                    icon: "system",
+                    isRead: false,
+                    toUserId: userId,
+                    type: "system",
+                    createdAt: FieldValue.serverTimestamp(),
+                };
+                addNotification(notify);
+            });
         return newStreak;
     } else if (diffInDays > 1) {
         await userRef.update({

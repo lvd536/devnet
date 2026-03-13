@@ -1,8 +1,9 @@
 "use server";
 import { adminDb } from "@/lib/firebaseAdmin";
-import { IBanner, IUserBanner, IUserProfile } from "@/interfaces/interfaces";
+import { IBanner, INotification, IUserBanner, IUserProfile } from "@/interfaces/interfaces";
 import { getIsAdmin } from "./user";
 import { FieldValue } from "firebase-admin/firestore";
+import { addNotification } from "./notifications";
 
 export async function addBanner(idToken: string, banner: IBanner) {
     try {
@@ -170,7 +171,18 @@ export async function checkBanners(userId: string) {
                     awardedAt: FieldValue.serverTimestamp(),
                 },
             ];
-            await setUserBanners(userId, newUserBanner);
+            setUserBanners(userId, newUserBanner).then(() => {
+                const notify: Omit<INotification, "id"> = {
+                    title: `Вы доступен новый баннер - ${id}`,
+                    description: "Можете установить его в профиле",
+                    icon: "system",
+                    isRead: false,
+                    toUserId: userId,
+                    type: "system",
+                    createdAt: FieldValue.serverTimestamp(),
+                };
+                addNotification(notify);
+            })
         }
     });
 }

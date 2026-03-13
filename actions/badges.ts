@@ -1,8 +1,9 @@
 "use server";
 import { adminDb } from "@/lib/firebaseAdmin";
-import { IBadge, IUserBadge } from "@/interfaces/interfaces";
+import { IBadge, INotification, IUserBadge } from "@/interfaces/interfaces";
 import { getIsAdmin } from "./user";
 import { FieldValue } from "firebase-admin/firestore";
+import { addNotification } from "./notifications";
 
 export async function addBadge(idToken: string, badge: IBadge) {
     try {
@@ -81,10 +82,23 @@ async function giveBadge(userId: string, badgeId: string) {
 
     if (snap.exists) return;
 
-    await badgeRef.set({
-        awardedAt: FieldValue.serverTimestamp(),
-        awardedBy: "system",
-    });
+    badgeRef
+        .set({
+            awardedAt: FieldValue.serverTimestamp(),
+            awardedBy: "system",
+        })
+        .then(() => {
+            const notify: Omit<INotification, "id"> = {
+                title: `Вы доступен новый бейдж - ${badgeId}`,
+                description: "Можете посмотреть на него в профиле",
+                icon: "badge",
+                isRead: false,
+                toUserId: userId,
+                type: "badge",
+                createdAt: FieldValue.serverTimestamp(),
+            };
+            addNotification(notify);
+        });
 }
 
 export async function checkBadges(userId: string) {

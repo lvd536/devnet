@@ -1,8 +1,9 @@
 "use server";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { processEvent } from "./gamification";
-import { IUserProfile } from "@/interfaces/interfaces";
+import { INotification, IUserProfile } from "@/interfaces/interfaces";
 import { FieldValue } from "firebase-admin/firestore";
+import { addNotification } from "./notifications";
 
 export async function addFollower(
     targetUserId: string,
@@ -54,6 +55,18 @@ export async function addFollower(
             tx.update(currentRef, {
                 "stats.followingCount": FieldValue.increment(1),
             });
+            
+            const targetId = targetSnap.id
+            const followerUsername = (currentSnap.data() as IUserProfile).username
+            const notify: Omit<INotification, "id"> = {
+                title: `Новый подписчик: ${followerUsername}`,
+                icon: "follow",
+                isRead: false,
+                toUserId: targetId,
+                type: "follow",
+                createdAt: FieldValue.serverTimestamp(),
+            };
+            addNotification(notify);
         });
         processEvent(uid, "USER_FOLLOW");
         return true;

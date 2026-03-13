@@ -1,8 +1,9 @@
 "use server";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { processEvent } from "./gamification";
-import { IPost, IUserProfile } from "@/interfaces/interfaces";
+import { INotification, IPost, IUserProfile } from "@/interfaces/interfaces";
 import { FieldValue } from "firebase-admin/firestore";
+import { addNotification } from "./notifications";
 
 export async function addLike(postId: string, idToken: string) {
     try {
@@ -49,6 +50,18 @@ export async function addLike(postId: string, idToken: string) {
             tx.update(postCreatorRef, {
                 "stats.likesReceived": FieldValue.increment(1),
             });
+
+            const targetId = postCreatorSnap.id;
+            const likedUsername = (userSnap.data() as IUserProfile).username;
+            const notify: Omit<INotification, "id"> = {
+                title: `Получен лайк от ${likedUsername}`,
+                icon: "like",
+                isRead: false,
+                toUserId: targetId,
+                type: "like",
+                createdAt: FieldValue.serverTimestamp(),
+            };
+            addNotification(notify);
         });
         processEvent(uid, "POST_LIKED");
     } catch (err) {

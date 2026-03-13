@@ -34,7 +34,8 @@ export function formatFirestoreDate(value: unknown): string {
 
     return date.toLocaleDateString("ru-RU", {
         day: "numeric",
-        month: "long",
-        year: "numeric",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
     });
 }

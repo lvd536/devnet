@@ -94,14 +94,31 @@ export interface IFollowing {
     createdAt: FirestoreCreatedAt;
 }
 
-export type NotificationType = "like" | "comment" | "follow" | "badge";
+export type NotificationType =
+    | "like"
+    | "comment"
+    | "follow"
+    | "badge"
+    | "system"
+    | "alert"
+    | "error";
 
 export interface INotification {
     id: string;
     type: NotificationType;
 
-    fromUserId: string;
-    postId?: string;
+    icon:
+        | "like"
+        | "comment"
+        | "follow"
+        | "badge"
+        | "system"
+        | "alert"
+        | "error";
+    title: string;
+    description?: string;
+
+    toUserId: string;
 
     isRead: boolean;
     createdAt: FirestoreCreatedAt;

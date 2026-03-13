@@ -34,6 +34,7 @@ import {
     IFollowing,
     IGitHubRepo,
     ILike,
+    INotification,
     IPost,
     IProject,
     IRole,
@@ -796,4 +797,20 @@ export async function getUserBanners(userId: string) {
               id: doc.id,
               ...doc.data(),
           })) as IUserBanner[]);
+}
+
+export async function getSystemNotifications(): Promise<
+    INotification[] | undefined
+> {
+    const notificationsRef = query(
+        collection(db, "notifications"),
+        where("toUserId", "==", "system"),
+    );
+    const notificationsSnap = await getDocs(notificationsRef);
+
+    if (notificationsSnap.empty) return undefined;
+    else
+        return notificationsSnap.docs.map(
+            (doc) => ({ id: doc.id, ...doc.data() }) as INotification,
+        );
 }

@@ -1,3 +1,4 @@
+import { INotification } from "@/interfaces/interfaces";
 import {
     Heart,
     MessageSquare,
@@ -8,8 +9,11 @@ import {
     XCircle,
 } from "lucide-react";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const iconMap: Record<string, React.ComponentType<any>> = {
+export const iconMap: Record<
+    INotification["icon"],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    React.ComponentType<any>
+> = {
     like: Heart,
     comment: MessageSquare,
     follow: User,
@@ -28,3 +32,7 @@ export const accentMap: Record<string, string> = {
     alert: "bg-amber-600/10 border-amber-600",
     error: "bg-red-700/10 border-red-700",
 };
+
+export const notificationIconKeys = Object.keys(
+    iconMap,
+) as INotification["icon"][];

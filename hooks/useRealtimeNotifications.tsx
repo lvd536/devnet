@@ -11,7 +11,6 @@ import {
     writeBatch,
     getDocs,
     limit,
-    getDoc,
     deleteDoc,
     or,
 } from "firebase/firestore";

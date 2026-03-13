@@ -107,14 +107,7 @@ export interface INotification {
     id: string;
     type: NotificationType;
 
-    icon:
-        | "like"
-        | "comment"
-        | "follow"
-        | "badge"
-        | "system"
-        | "alert"
-        | "error";
+    icon: NotificationType;
     title: string;
     description?: string;
 

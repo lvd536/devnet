@@ -32,7 +32,7 @@ export function AdminBadgesTable({ badges }: IProps) {
             </div>
         );
 
-    function handleDeleteRole(badgeId: string) {
+    function handleDeleteBadge(badgeId: string) {
         const user = auth.currentUser;
         if (!user) return;
         user.getIdToken().then((token) => {
@@ -91,7 +91,7 @@ export function AdminBadgesTable({ badges }: IProps) {
                                             <DropdownMenuItem
                                                 variant="destructive"
                                                 onClick={() =>
-                                                    handleDeleteRole(badge.id)
+                                                    handleDeleteBadge(badge.id)
                                                 }
                                             >
                                                 Delete

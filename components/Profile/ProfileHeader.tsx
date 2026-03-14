@@ -40,7 +40,10 @@ export default function ProfileHeader() {
     return (
         <>
             <div className="relative w-full">
-                <ProfileBanner userId={userId ?? user.uid} currentBanner={banner} />
+                <ProfileBanner
+                    userId={userId ?? user.uid}
+                    currentBanner={banner}
+                />
                 <div className="absolute -bottom-10 inset-x-5 flex justify-between">
                     <div className="relative">
                         <ProfileAvatar
@@ -48,7 +51,7 @@ export default function ProfileHeader() {
                             username={username}
                             avatarUrl={avatarUrl}
                         />
-                        <div className="absolute -right-1.25 -bottom-1.25 w-7 h-7 rounded-full flex items-center justify-center text-[10px] text-center font-bold bg-linear-to-br from-cyan-500 to-indigo-600 shadow">
+                        <div className="absolute -right-1.25 -bottom-1.25 w-7 h-7 rounded-full flex items-center justify-center text-[10px] text-center text-white font-bold bg-linear-to-br from-cyan-500 to-indigo-600 shadow">
                             Lv {level}
                         </div>
                     </div>

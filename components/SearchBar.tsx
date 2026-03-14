@@ -5,12 +5,9 @@ interface IProps {
     setSearchValue: Dispatch<SetStateAction<string>>;
 }
 
-export default function SearchBar({
-    searchValue,
-    setSearchValue,
-}: IProps) {
+export default function SearchBar({ searchValue, setSearchValue }: IProps) {
     return (
-        <div className="flex gap-4 items-center justify-between w-full bg-[#222224] p-4 rounded-3xl">
+        <div className="flex gap-4 items-center justify-between w-full bg-accent p-4 rounded-3xl">
             <Search className="text-[#ffffff4d] w-5 h-5" />
             <input
                 type="text"

@@ -10,7 +10,7 @@ import DProfileControls from "./Dynamic/DProfileControls";
 import ProfileExpBar from "./ProfileExpBar";
 import ProfileBadges from "./ProfileBadges";
 import { ProfileHeaderSkeleton } from "../Skeletons/Profile/ProfileHeaderSkeleton";
-import ProfileBanner from "./ProfileBanner";
+import ProfileBanner from "./Banner/ProfileBanner";
 
 export default function ProfileHeader() {
     const { userId } = useParams<{ userId: string }>();

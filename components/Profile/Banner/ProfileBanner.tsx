@@ -1,20 +1,6 @@
 "use client";
 import useBanners from "@/hooks/useBanners";
 import useUserBanners from "@/hooks/useUserBanners";
-import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import { Field } from "@/components/ui/field";
-import { Label } from "@/components/ui/label";
-import { Check, Lock, Palette } from "lucide-react";
 import { IBanner } from "@/interfaces/interfaces";
 import { useState } from "react";
 import { auth } from "@/lib/firebase";

@@ -43,7 +43,10 @@ export function Badge({
               ${rarity === "legendary" && "animate-pulse"}
             `}
                 >
-                    <Icon size={size === "sm" ? 18 : 20} color={color} />
+                    <Icon
+                        size={size === "sm" ? 18 : 20}
+                        color={color ?? "white"}
+                    />
                 </div>
             </HoverCardTrigger>
             <HoverCardContent className="flex w-64 flex-col gap-0.5 bg-background">

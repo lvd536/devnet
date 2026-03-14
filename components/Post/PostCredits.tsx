@@ -22,7 +22,7 @@ export default function PostCredits({
     return (
         <div className="flex flex-1 min-w-0 gap-3 items-center justify-between">
             <Link href={browserRoutes.user.link(userId)}>
-                <h3 className="flex text-sm font-semibold text-neutral-100">
+                <h3 className="flex text-sm font-semibold text-text">
                     {githubUsername || username}
                     {role && (
                         <div className="flex gap-2 ml-2 items-center justify-center">
@@ -36,7 +36,7 @@ export default function PostCredits({
                         </div>
                     )}
                 </h3>
-                <div className="flex text-xs text-neutral-400 mt-0.5">
+                <div className="flex text-xs text-text-secondary mt-0.5">
                     @{username}
                     <div className="flex gap-2 ml-2 items-center justify-center">
                         <div className="w-0.75 h-0.75 bg-text-secondary/50 rounded-full" />
@@ -47,10 +47,10 @@ export default function PostCredits({
                 </div>
             </Link>
 
-            <div className="text-xs text-neutral-400">
+            <div className="text-xs text-text">
                 <button
                     aria-label="Post actions"
-                    className="p-2 rounded-md hover:bg-neutral-700/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500"
+                    className="p-2 rounded-md hover:bg-neutral-700/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 transition-all duration-300"
                 >
                     ⋯
                 </button>

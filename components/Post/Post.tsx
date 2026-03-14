@@ -38,7 +38,7 @@ export default function Post({ post }: IProps) {
                     role={user.role}
                 />
                 {post.content ? (
-                    <div className="mt-1 text-sm text-neutral-200 prose prose-invert max-w-none">
+                    <div className="mt-1 text-sm text-text prose prose-invert max-w-none">
                         <p className={`whitespace-pre-wrap line-clamp-6`}>
                             {post.content}
                         </p>

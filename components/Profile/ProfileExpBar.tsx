@@ -16,7 +16,7 @@ export default function ProfileExpBar({ level, xp }: IProps) {
                 </div>
                 <div>{levelReachPercent}%</div>
             </div>
-            <div className="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-accent h-2 rounded-full overflow-hidden">
                 <div
                     className="h-2 rounded-full bg-linear-to-r from-purple-500 to-indigo-500"
                     style={{ width: `${levelReachPercent}%` }}

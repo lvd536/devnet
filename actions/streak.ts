@@ -1,7 +1,7 @@
 "use server";
 
 import { INotification, IUserProfile } from "@/interfaces/interfaces";
-import { adminDb } from "@/lib/firebaseAdmin";
+import { adminDb } from "@/lib/firebase/firebaseAdmin";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { addNotification } from "./notifications";
 

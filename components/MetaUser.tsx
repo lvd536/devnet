@@ -1,7 +1,7 @@
 import { IUserSummary } from "@/interfaces/interfaces";
 import PostAvatar from "./Post/PostAvatar";
 import FollowBtn from "./FollowBtn";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 
 interface IProps {
     user: IUserSummary;

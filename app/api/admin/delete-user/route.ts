@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
-import { adminDeleteUser } from "@/lib/adminDeleteUser";
-import { adminAuth } from "@/lib/firebaseAdmin";
-import { adminDb } from "@/lib/firebaseAdmin";
+import { adminDeleteUser } from "@/lib/firebase/adminDeleteUser";
+import { adminAuth, adminDb } from "@/lib/firebase/firebaseAdmin";
 import { IRole } from "@/interfaces/interfaces";
 
 export async function POST(req: NextRequest) {

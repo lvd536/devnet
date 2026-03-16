@@ -22,7 +22,7 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IBanner } from "@/interfaces/interfaces";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { HexColorPicker } from "react-colorful";

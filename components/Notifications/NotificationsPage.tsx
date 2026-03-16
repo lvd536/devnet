@@ -1,6 +1,6 @@
 "use client";
 
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { Check, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";

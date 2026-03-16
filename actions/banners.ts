@@ -1,5 +1,5 @@
 "use server";
-import { adminDb } from "@/lib/firebaseAdmin";
+import { adminDb } from "@/lib/firebase/firebaseAdmin";
 import { IBanner, INotification, IUserBanner, IUserProfile } from "@/interfaces/interfaces";
 import { getIsAdmin } from "./user";
 import { FieldValue } from "firebase-admin/firestore";

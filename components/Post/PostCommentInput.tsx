@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { SendHorizonal } from "lucide-react";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { addComment } from "@/actions/comments";
 import { IComment } from "@/interfaces/interfaces";
 

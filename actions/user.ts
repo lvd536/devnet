@@ -1,7 +1,7 @@
 "use server";
 
 import { IUserProfile } from "@/interfaces/interfaces";
-import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
+import { adminAuth, adminDb } from "@/lib/firebase/firebaseAdmin";
 
 export async function getIsAdmin(idToken: string) {
     if (!idToken) throw new Error("Unauthorized");

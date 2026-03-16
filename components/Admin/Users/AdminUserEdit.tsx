@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Controller, useForm, Path } from "react-hook-form";
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db } from "@/lib/firebase/firebase";
 import { IRole, IUserProfile } from "@/interfaces/interfaces";
 import { checkUsernameExists } from "@/utils/firebaseFunctions";
 import { Field, FieldGroup } from "@/components/ui/field";

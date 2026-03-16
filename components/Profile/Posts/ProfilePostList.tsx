@@ -2,7 +2,7 @@
 import Post from "@/components/Post/Post";
 import { ProfilePostsSkeleton } from "@/components/Skeletons/Profile/ProfilePostsSkeleton";
 import useProfilePosts from "@/hooks/useProfilePosts";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { useParams } from "next/navigation";
 export default function ProfilePostList() {
     const { userId } = useParams<{ userId: string }>();

@@ -15,7 +15,7 @@ import {
     or,
 } from "firebase/firestore";
 import { sendToast } from "@/utils/toast";
-import { db } from "@/lib/firebase";
+import { db } from "@/lib/firebase/firebase";
 
 export default function useRealtimeNotifications(userId?: string) {
     const [loading, setLoading] = useState<boolean>(true);

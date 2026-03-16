@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ROLE_PERMISSIONS } from "@/consts/rolePermissions";
 import { IRole } from "@/interfaces/interfaces";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { Plus, SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { HexColorPicker } from "react-colorful";

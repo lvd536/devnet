@@ -1,6 +1,6 @@
 "use server";
 import { INotification } from "@/interfaces/interfaces";
-import { adminDb } from "@/lib/firebaseAdmin";
+import { adminDb } from "@/lib/firebase/firebaseAdmin";
 import { getIsAdmin } from "./user";
 import { FieldValue } from "firebase-admin/firestore";
 

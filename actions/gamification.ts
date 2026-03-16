@@ -1,6 +1,6 @@
 "use server";
 
-import { adminDb } from "@/lib/firebaseAdmin";
+import { adminDb } from "@/lib/firebase/firebaseAdmin";
 import { calculateNextLevelXP } from "@/utils/firebaseFunctions";
 import { checkBadges } from "./badges";
 import { checkBanners } from "./banners";

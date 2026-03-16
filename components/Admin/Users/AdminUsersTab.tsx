@@ -1,7 +1,7 @@
 import useSearch from "@/hooks/useSearch";
 import SearchBar from "../../SearchBar";
 import { AdminUsersTable } from "./AdminUsersTable";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { AdminUsersSkeleton } from "@/components/Skeletons/Admin/AdminUsersSkeleton";
 
 export default function AdminUsersTab() {

@@ -14,7 +14,7 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { useUserProfileStore } from "@/stores/useProfileStore";
 import { checkUsernameExists } from "@/utils/firebaseFunctions";
 import { sendToast } from "@/utils/toast";

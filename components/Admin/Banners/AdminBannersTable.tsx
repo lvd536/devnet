@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { MoreHorizontalIcon } from "lucide-react";
 import { IBanner } from "@/interfaces/interfaces";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { deleteBanner } from "@/actions/banners";
 
 interface IProps {

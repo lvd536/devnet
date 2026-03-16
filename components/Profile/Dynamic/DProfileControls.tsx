@@ -1,7 +1,7 @@
 "use client";
 
 import FollowBtn from "@/components/FollowBtn";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { useParams } from "next/navigation";
 
 export default function DProfileControls() {

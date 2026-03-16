@@ -1,4 +1,4 @@
-import { adminDb, adminAuth } from "@/lib/firebaseAdmin";
+import { adminDb, adminAuth } from "@/lib/firebase/firebaseAdmin";
 
 const BATCH_LIMIT = 450;
 
@@ -142,7 +142,7 @@ async function deleteCommentsByAuthor(uid: string) {
             }
         }
         return;
-    } catch (err) {
+    } catch {
         console.warn(
             "collectionGroup(comments) failed, falling back to per-post scan",
         );

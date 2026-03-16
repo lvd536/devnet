@@ -1,5 +1,5 @@
 "use server";
-import { adminDb } from "@/lib/firebaseAdmin";
+import { adminDb } from "@/lib/firebase/firebaseAdmin";
 import { IRole } from "@/interfaces/interfaces";
 import { getIsAdmin } from "./user";
 

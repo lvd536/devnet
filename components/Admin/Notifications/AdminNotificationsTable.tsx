@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { MoreHorizontalIcon } from "lucide-react";
 import { INotification } from "@/interfaces/interfaces";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { Label } from "@/components/ui/label";
 import { iconMap } from "@/utils/notificationIcons";
 import { deleteNotification } from "@/actions/notifications";

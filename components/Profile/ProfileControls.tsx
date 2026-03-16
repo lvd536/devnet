@@ -1,6 +1,6 @@
 "use client";
 
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { useUserProfileStore } from "@/stores/useProfileStore";
 import { handleSync } from "@/utils/firebaseFunctions";
 import { RefreshCcw, LogOut } from "lucide-react";

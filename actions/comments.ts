@@ -1,5 +1,5 @@
 "use server";
-import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
+import { adminAuth, adminDb } from "@/lib/firebase/firebaseAdmin";
 import { processEvent } from "./gamification";
 import { INotification, IPost, IUserProfile } from "@/interfaces/interfaces";
 import { FieldValue } from "firebase-admin/firestore";

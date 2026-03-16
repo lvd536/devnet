@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IUserBanner } from "@/interfaces/interfaces";
 import { Plus } from "lucide-react";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import useBanners from "@/hooks/useBanners";
 import { setUserBanners } from "@/actions/banners";
 

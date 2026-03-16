@@ -21,7 +21,7 @@ import { Badge } from "@/components/Badge";
 import { badgeIcons } from "@/utils/badgeIcons";
 import { IUserBadge } from "@/interfaces/interfaces";
 import { Plus } from "lucide-react";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { setUserBadges } from "@/actions/badges";
 
 interface Props {

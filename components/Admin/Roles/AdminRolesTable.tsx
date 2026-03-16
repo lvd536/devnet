@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { MoreHorizontalIcon } from "lucide-react";
 import { IRole } from "@/interfaces/interfaces";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { deleteRole } from "@/actions/roles";
 
 interface IProps {

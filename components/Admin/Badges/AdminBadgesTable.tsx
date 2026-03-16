@@ -17,7 +17,7 @@ import { MoreHorizontalIcon } from "lucide-react";
 import { IBadge } from "@/interfaces/interfaces";
 import { badgeIcons } from "@/utils/badgeIcons";
 import { Badge } from "@/components/Badge";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { deleteBadge } from "@/actions/badges";
 
 interface IProps {

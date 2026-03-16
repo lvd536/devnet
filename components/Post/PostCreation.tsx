@@ -7,7 +7,7 @@ import { useState } from "react";
 import { IProject } from "@/interfaces/interfaces";
 import Repository from "../Repository";
 import ProfileReposModal from "../Profile/ProfileReposModal";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { sendPost } from "@/actions/posts";
 
 export default function PostCreation() {

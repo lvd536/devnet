@@ -1,5 +1,5 @@
 import { IUserProfile } from "@/interfaces/interfaces";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import PostAvatar from "../Post/PostAvatar";
 import FollowBtn from "../FollowBtn";
 

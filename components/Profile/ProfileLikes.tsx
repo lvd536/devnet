@@ -1,6 +1,6 @@
 import Post from "@/components/Post/Post";
 import useLikes from "@/hooks/useLikes";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { useParams } from "next/navigation";
 import { ProfilePostsSkeleton } from "../Skeletons/Profile/ProfilePostsSkeleton";
 

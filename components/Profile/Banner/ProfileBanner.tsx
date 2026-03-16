@@ -3,7 +3,7 @@ import useBanners from "@/hooks/useBanners";
 import useUserBanners from "@/hooks/useUserBanners";
 import { IBanner } from "@/interfaces/interfaces";
 import { useState } from "react";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { setUserBanner } from "@/actions/banners";
 import ProfileBannerEdit from "./ProfileBannerEdit";
 import { ThemeToggle } from "@/components/Themes/ThemeToggle";

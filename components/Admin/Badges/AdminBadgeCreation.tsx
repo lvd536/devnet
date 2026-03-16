@@ -23,7 +23,7 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { IBadge } from "@/interfaces/interfaces";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { badgeIconKeys, badgeIcons } from "@/utils/badgeIcons";
 import { SquarePlus } from "lucide-react";
 import { useState } from "react";

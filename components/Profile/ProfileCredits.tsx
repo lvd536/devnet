@@ -1,6 +1,6 @@
 import { Calendar } from "lucide-react";
 import ProfileMeta from "./ProfileMeta";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { IRole } from "@/interfaces/interfaces";
 import ProfileRole from "./ProfileRole";
 

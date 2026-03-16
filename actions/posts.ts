@@ -1,6 +1,6 @@
 "use server";
 
-import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
+import { adminAuth, adminDb } from "@/lib/firebase/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { processEvent } from "./gamification";
 

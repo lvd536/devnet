@@ -1,6 +1,6 @@
 "use client";
 import { addLike, deleteLike } from "@/actions/likes";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { getIsLiked } from "@/utils/firebaseFunctions";
 import { Heart, MessageSquareMore } from "lucide-react";
 import Link from "next/link";

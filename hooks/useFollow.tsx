@@ -2,7 +2,7 @@
 
 import { addFollower, removeFollower } from "@/actions/follow";
 import { browserRoutes } from "@/consts/browserRoutes";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { getIsFollower } from "@/utils/firebaseFunctions";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

@@ -2,19 +2,25 @@
 
 import { useState } from "react";
 import ProfileNavigation from "./ProfileNavigation";
-import ProfilePosts from "./Posts/ProfilePosts";
-import ProfileLikes from "./ProfileLikes";
+import PostsList from "../Post/PostsList";
+import PostCreation from "../Post/PostCreation";
+import { useParams } from "next/navigation";
 
 export default function ProfileBody() {
     const [currentPage, setCurrentPage] = useState<"posts" | "likes">("posts");
+    const { userId } = useParams<{ userId?: string }>();
     return (
         <>
             <ProfileNavigation
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
             />
-            {currentPage === "posts" && <ProfilePosts />}
-            {currentPage === "likes" && <ProfileLikes />}
+
+            <div className="flex w-full flex-col gap-2 mt-2">
+                {!userId && <PostCreation />}
+                {currentPage === "posts" && <PostsList type="user" targetUid={userId} />}
+                {currentPage === "likes" && <PostsList type="liked" targetUid={userId} />}
+            </div>
         </>
     );
 }

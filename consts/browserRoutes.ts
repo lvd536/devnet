@@ -1,4 +1,8 @@
 export const browserRoutes = {
+    url: {
+        name: "Base Url",
+        link: "localhost:3000",
+    },
     home: {
         name: "Home",
         link: "/",

@@ -36,6 +36,7 @@ export default function Post({ post }: IProps) {
                     createdAt={post.createdAt}
                     userId={user.id!}
                     role={user.role}
+                    postLink={browserRoutes.post.link(post.id)}
                 />
                 {post.content ? (
                     <div className="mt-1 text-sm text-text prose prose-invert max-w-none">

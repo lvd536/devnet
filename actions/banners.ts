@@ -1,6 +1,11 @@
 "use server";
 import { adminDb } from "@/lib/firebase/firebaseAdmin";
-import { IBanner, INotification, IUserBanner, IUserProfile } from "@/interfaces/interfaces";
+import {
+    IBanner,
+    INotification,
+    IUserBanner,
+    IUserProfile,
+} from "@/interfaces/interfaces";
 import { getIsAdmin } from "./user";
 import { FieldValue } from "firebase-admin/firestore";
 import { addNotification } from "./notifications";
@@ -11,9 +16,36 @@ export async function addBanner(idToken: string, banner: IBanner) {
         if (!isAdmin) return;
 
         const bannerRef = adminDb.doc(`banners/${banner.id}`);
+
+        const bannerSnap = await bannerRef.get();
+        if (bannerSnap.exists) return;
+
         await bannerRef.set(banner);
     } catch (err) {
         console.error(err);
+    }
+}
+
+export async function addUserBanner(
+    idToken: string,
+    userBanner: IUserBanner,
+): Promise<"exists" | "error" | "success"> {
+    try {
+        const { isAdmin, uid } = await getIsAdmin(idToken);
+        if (!isAdmin) return "error";
+
+        const userBannerRef = adminDb.doc(
+            `users/${uid}/banners/${userBanner.id}`,
+        );
+
+        const userBannerSnap = await userBannerRef.get();
+        if (userBannerSnap.exists) return "exists";
+
+        await userBannerRef.set(userBanner);
+        return "success";
+    } catch (err) {
+        console.error(err);
+        return "error";
     }
 }
 
@@ -156,22 +188,13 @@ export async function checkBanners(userId: string) {
         );
 
         if (receiveBanner) {
-            const userBanners = userBannersSnap.docs.map(
-                (doc) =>
-                    ({
-                        id: doc.id,
-                        ...doc.data(),
-                    }) as IUserBanner,
-            );
-            const newUserBanner: IUserBanner[] = [
-                ...userBanners,
-                {
-                    id,
-                    awardedBy: "system",
-                    awardedAt: FieldValue.serverTimestamp(),
-                },
-            ];
-            setUserBanners(userId, newUserBanner).then(() => {
+            const newUserBanner: IUserBanner = {
+                id,
+                awardedBy: "system",
+                awardedAt: FieldValue.serverTimestamp(),
+            };
+            addUserBanner(userId, newUserBanner).then((result) => {
+                if (result === "error" || result === "exists") return;
                 const notify: Omit<INotification, "id"> = {
                     title: `Вы доступен новый баннер - ${id}`,
                     description: "Можете установить его в профиле",
@@ -182,7 +205,7 @@ export async function checkBanners(userId: string) {
                     createdAt: FieldValue.serverTimestamp(),
                 };
                 addNotification(notify);
-            })
+            });
         }
     });
 }

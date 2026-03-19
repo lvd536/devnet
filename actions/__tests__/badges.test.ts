@@ -2,6 +2,7 @@
 const mockDocSet = jest.fn();
 const mockDocGet = jest.fn();
 const mockDocDelete = jest.fn();
+const mockDocData = jest.fn();
 
 const mockBatchSet = jest.fn();
 const mockBatchDelete = jest.fn();
@@ -16,6 +17,7 @@ jest.mock("../../lib/firebase/firebaseAdmin", () => ({
             get: mockDocGet,
             set: mockDocSet,
             delete: mockDocDelete,
+            data: mockDocData,
         })),
         collection: jest.fn(() => ({
             get: mockCollectionGet,
@@ -33,8 +35,14 @@ jest.mock("../user", () => ({
     getIsAdmin: jest.fn(),
 }));
 
-import { addBadge, deleteBadge, setUserBadges } from "@/actions/badges";
+import {
+    addBadge,
+    checkBadges,
+    deleteBadge,
+    setUserBadges,
+} from "@/actions/badges";
 import { getIsAdmin } from "@/actions/user";
+import { IUserProfile } from "@/interfaces/interfaces";
 
 const baseBadgeMock = {
     id: "test",
@@ -239,5 +247,39 @@ describe("setUserBadges", () => {
             },
         ] as any);
         expect(mockBatchDelete).toHaveBeenCalledTimes(6);
+    });
+});
+
+describe("checkBadges", () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+
+        mockDocData.mockReturnValue({
+            stats: {
+                commentsCount: 10,
+                followersCount: 0,
+                followingCount: 0,
+                likesGiven: 0,
+                likesReceived: 50,
+                postsCount: 0,
+                projectsCount: 0,
+                streakDays: 0,
+            },
+        });
+
+        mockDocGet.mockResolvedValue({
+            exists: true,
+            data: mockDocData,
+        });
+    });
+    it("should returns error if stats not exists", async () => {
+        mockDocGet.mockResolvedValue({ exists: false, data: () => undefined });
+        await expect(checkBadges("unknown_id")).rejects.toThrow("Unauthorized");
+    });
+    it("should works if stats exists", async () => {
+        await expect(checkBadges("valid_id")).resolves.not.toThrow();
+    });
+    it("should awards count returns correct value", async () => {
+        await expect(checkBadges("valid_id")).resolves.toBe(5);
     });
 });

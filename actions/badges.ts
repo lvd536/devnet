@@ -4,6 +4,7 @@ import { IBadge, INotification, IUserBadge } from "@/interfaces/interfaces";
 import { getIsAdmin } from "./user";
 import { FieldValue } from "firebase-admin/firestore";
 import { addNotification } from "./notifications";
+import { DEFAULT_BADGES } from "@/consts/defaultBadges";
 
 export async function addBadge(idToken: string, badge: IBadge) {
     try {
@@ -110,107 +111,14 @@ export async function checkBadges(userId: string) {
 
     if (!stats) throw new Error("Unauthorized");
 
-    let count: number = 0;
+    let count = 0;
 
-    //likes
-    if (stats.likesReceived >= 1) {
-        await giveBadge(userId, "first-like");
-        count++;
-    }
-    if (stats.likesReceived >= 10) {
-        await giveBadge(userId, "liked");
-        count++;
-    }
-    if (stats.likesReceived >= 50) {
-        await giveBadge(userId, "appreciated");
-        count++;
-    }
-    if (stats.likesReceived >= 200) {
-        await giveBadge(userId, "well-liked");
-        count++;
-    }
-    if (stats.likesReceived >= 1000) {
-        await giveBadge(userId, "community-favorite");
-        count++;
+    for (const badge of DEFAULT_BADGES) {
+        if (stats[badge.stat] >= badge.conditionValue) {
+            await giveBadge(userId, badge.badgeId);
+            count++;
+        }
     }
 
-    //comments
-    if (stats.commentsCount >= 1) {
-        await giveBadge(userId, "first-comment");
-        count++;
-    }
-    if (stats.commentsCount >= 10) {
-        await giveBadge(userId, "talkative");
-        count++;
-    }
-    if (stats.commentsCount >= 50) {
-        await giveBadge(userId, "active-discussion");
-        count++;
-    }
-    if (stats.commentsCount >= 200) {
-        await giveBadge(userId, "discussion-master");
-        count++;
-    }
-    if (stats.commentsCount >= 1000) {
-        await giveBadge(userId, "community-voice");
-        count++;
-    }
-
-    //posts
-    if (stats.postsCount >= 1) {
-        await giveBadge(userId, "new-creator");
-        count++;
-    }
-    if (stats.postsCount >= 5) {
-        await giveBadge(userId, "first-5-posts");
-        count++;
-    }
-    if (stats.postsCount >= 10) {
-        await giveBadge(userId, "middle-creator");
-        count++;
-    }
-    if (stats.postsCount >= 20) {
-        await giveBadge(userId, "senior-creator");
-        count++;
-    }
-
-    //followers followings
-    if (stats.followersCount >= 1) {
-        await giveBadge(userId, "new-media");
-        count++;
-    }
-    if (stats.followersCount >= 10) {
-        await giveBadge(userId, "first-followers");
-        count++;
-    }
-    if (stats.followersCount >= 50) {
-        await giveBadge(userId, "yung-star");
-        count++;
-    }
-    if (stats.followersCount >= 200) {
-        await giveBadge(userId, "media");
-        count++;
-    }
-    if (stats.followersCount >= 500) {
-        await giveBadge(userId, "popular");
-        count++;
-    }
-    if (stats.followersCount >= 5000) {
-        await giveBadge(userId, "media-giant");
-        count++;
-    }
-
-    if (stats.followingCount >= 1) {
-        await giveBadge(userId, "first-sub");
-        count++;
-    }
-    if (stats.followingCount >= 10) {
-        await giveBadge(userId, "junior-fan");
-        count++;
-    }
-    if (stats.followingCount >= 100) {
-        await giveBadge(userId, "big-fan");
-        count++;
-    }
     return count;
 }

@@ -78,13 +78,14 @@ export async function setUserBadges(
 }
 
 async function giveBadge(userId: string, badgeId: string) {
-    const badgeRef = adminDb.doc(`users/${userId}/badges/${badgeId}`);
-
-    const snap = await badgeRef.get();
-
+    const badgeSnap = await adminDb.doc(`badges/${badgeId}`).get();
+    if (!badgeSnap.exists) return;
+    
+    const userBadgeRef = adminDb.doc(`users/${userId}/badges/${badgeId}`);
+    const snap = await userBadgeRef.get();
     if (snap.exists) return;
 
-    badgeRef
+    userBadgeRef
         .set({
             awardedAt: FieldValue.serverTimestamp(),
             awardedBy: "system",

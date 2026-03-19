@@ -11,6 +11,8 @@ export async function addBadge(idToken: string, badge: IBadge) {
         if (!isAdmin) return;
 
         const badgeRef = adminDb.doc(`badges/${badge.id}`);
+        const badgeSnap = await badgeRef.get();
+        if (badgeSnap.exists) return;
         await badgeRef.set(badge);
     } catch (err) {
         console.error(err);

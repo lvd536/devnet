@@ -60,7 +60,7 @@ export async function setUserBadges(
 
         const payload: IUserBadge = {
             ...b,
-            awardedAt: b.awardedAt ?? Date.now(),
+            awardedAt: b.awardedAt ?? FieldValue.serverTimestamp(),
             awardedBy: b.awardedBy ?? "system",
         };
 

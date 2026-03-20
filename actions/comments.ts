@@ -4,6 +4,7 @@ import { processEvent } from "./gamification";
 import { INotification, IPost, IUserProfile } from "@/interfaces/interfaces";
 import { FieldValue } from "firebase-admin/firestore";
 import { addNotification } from "./notifications";
+import { getIsAdmin } from "./user";
 
 export async function addComment(
     idToken: string,
@@ -11,13 +12,9 @@ export async function addComment(
     message: string,
 ) {
     try {
-        if (!idToken) throw new Error("Unauthorized");
-        const decoded = await adminAuth
-            .verifyIdToken(idToken)
-            .catch(() => null);
-        if (!decoded) throw new Error("Invalid token");
+        const { uid } = await getIsAdmin(idToken);
 
-        const uid = decoded.uid;
+        if (!uid) throw new Error("Failed to verify user by idToken");
 
         const userRef = adminDb.doc(`users/${uid}`);
         const postRef = adminDb.doc(`posts/${postId}`);

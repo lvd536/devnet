@@ -10,7 +10,9 @@ import {
     mockBatchSet,
     mockBatchDelete,
     resetFirebaseMocks,
+    mockDocUpdate,
 } from "../__mocks__/firebaseAdmin.mock";
+import { getIsAdmin } from "../../actions/user";
 
 jest.mock("../../lib/firebase/firebaseAdmin", () => {
     const mock = jest.requireActual("../__mocks__/firebaseAdmin.mock");
@@ -22,92 +24,111 @@ jest.mock("../../actions/user", () => {
 });
 
 import {
-    addBadge,
-    checkBadges,
-    deleteBadge,
-    setUserBadges,
-} from "@/actions/badges";
-import { getIsAdmin } from "@/actions/user";
+    addBanner,
+    addUserBanner,
+    checkBanners,
+    deleteBanner,
+    setUserBanner,
+    setUserBanners,
+} from "../banners";
 
-const baseBadgeMock = {
-    id: "test",
-    title: "Test",
+const bannerDefault = {
+    id: "banner",
 } as any;
 
-describe("addBadge", () => {
+describe("addBanner", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         resetFirebaseMocks();
     });
-    it("should create badge if admin and doc not exists", async () => {
+    it("should add banner if admin and banner not exists", async () => {
         (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: true });
         mockDocGet.mockResolvedValue({ exists: false });
 
-        await addBadge("token", baseBadgeMock);
+        await addBanner("token", bannerDefault);
 
         expect(mockDocSet).toHaveBeenCalled();
     });
-    it("should not create badge if admin and doc exists", async () => {
+    it("should not add banner if admin and banner exists", async () => {
         (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: true });
         mockDocGet.mockResolvedValue({ exists: true });
 
-        await addBadge("token", baseBadgeMock);
+        await addBanner("token", bannerDefault);
 
         expect(mockDocSet).not.toHaveBeenCalled();
     });
-    it("should not create badge if not admin and doc exists", async () => {
-        (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: false });
-        mockDocGet.mockResolvedValue({ exists: true });
-
-        await addBadge("token", baseBadgeMock);
-
-        expect(mockDocGet).not.toHaveBeenCalled();
-        expect(mockDocSet).not.toHaveBeenCalled();
-    });
-    it("should not create badge if not admin and doc not exists", async () => {
+    it("should not add banner if not admin", async () => {
         (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: false });
         mockDocGet.mockResolvedValue({ exists: false });
 
-        await addBadge("token", baseBadgeMock);
+        await addBanner("token", bannerDefault);
 
-        expect(mockDocGet).not.toHaveBeenCalled();
         expect(mockDocSet).not.toHaveBeenCalled();
-    });
-    it("should handle errors", async () => {
-        (getIsAdmin as jest.Mock).mockRejectedValue(new Error("fail"));
-
-        const spy = jest.spyOn(console, "error").mockImplementation();
-
-        await addBadge("token", baseBadgeMock);
-
-        expect(spy).toHaveBeenCalled();
-
-        spy.mockRestore();
     });
 });
 
-describe("deleteBadge", () => {
+describe("addUserBanner", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         resetFirebaseMocks();
     });
-    it("should delete badge if admin", async () => {
+    it("should add banner if admin and banner not exists", async () => {
+        (getIsAdmin as jest.Mock).mockResolvedValue({
+            isAdmin: true,
+            uid: "testuid",
+        });
+        mockDocGet.mockResolvedValue({ exists: false });
+
+        await addUserBanner("token", bannerDefault);
+
+        expect(mockDocSet).toHaveBeenCalled();
+    });
+    it("should not add banner if admin and banner exists", async () => {
+        (getIsAdmin as jest.Mock).mockResolvedValue({
+            isAdmin: true,
+            uid: "testuid",
+        });
+        mockDocGet.mockResolvedValue({ exists: true });
+
+        await addUserBanner("token", bannerDefault);
+
+        expect(mockDocSet).not.toHaveBeenCalled();
+    });
+    it("should not add banner if not admin", async () => {
+        (getIsAdmin as jest.Mock).mockResolvedValue({
+            isAdmin: false,
+            uid: "testuid",
+        });
+        mockDocGet.mockResolvedValue({ exists: false });
+
+        await addUserBanner("token", bannerDefault);
+
+        expect(mockDocSet).not.toHaveBeenCalled();
+    });
+});
+
+describe("deleteBanner", () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        resetFirebaseMocks();
+    });
+    it("should delete banner if admin", async () => {
         (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: true });
 
-        await deleteBadge("token", baseBadgeMock);
+        await deleteBanner("token", "bannerId");
 
         expect(mockDocDelete).toHaveBeenCalled();
     });
-    it("should not delete badge not admin", async () => {
+    it("should not delete banner if not admin", async () => {
         (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: false });
 
-        await deleteBadge("token", baseBadgeMock);
+        await deleteBanner("token", "bannerId");
 
         expect(mockDocDelete).not.toHaveBeenCalled();
     });
 });
 
-describe("setUserBadges", () => {
+describe("setUserBanners", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         resetFirebaseMocks();
@@ -120,12 +141,12 @@ describe("setUserBadges", () => {
         });
 
         mockCollectionDoc.mockImplementation((id?: string) => ({
-            id: id ?? "testId",
+            id: id ?? "testBannerId",
         }));
     });
     it("should commit changes", async () => {
         (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: true });
-        await setUserBadges("token", [
+        await setUserBanners("token", [
             {
                 id: "test",
                 title: "Test",
@@ -143,7 +164,7 @@ describe("setUserBadges", () => {
     });
     it("should commit changes and returns all values", async () => {
         (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: true });
-        const data = await setUserBadges("token", [
+        const data = await setUserBanners("token", [
             {
                 id: "test",
                 title: "Test",
@@ -160,28 +181,9 @@ describe("setUserBadges", () => {
         expect(mockBatchCommit).toHaveBeenCalled();
         expect(data).toHaveLength(3);
     });
-    it("should return empty array if not admin and not commit changes", async () => {
-        (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: false });
-        const data = await setUserBadges("token", [
-            {
-                id: "test",
-                title: "Test",
-            },
-            {
-                id: "test2",
-                title: "Test2",
-            },
-            {
-                id: "test3",
-                title: "Test3",
-            },
-        ] as any);
-        expect(mockBatchCommit).not.toHaveBeenCalled();
-        expect(data).toHaveLength(0);
-    });
     it("should set all badges and commit changes", async () => {
         (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: true });
-        await setUserBadges("token", [
+        await setUserBanners("token", [
             {
                 id: "test",
                 title: "Test",
@@ -200,7 +202,7 @@ describe("setUserBadges", () => {
     });
     it("should handle empty ids and commit changes", async () => {
         (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: true });
-        await setUserBadges("token", [
+        await setUserBanners("token", [
             {
                 id: "test",
                 title: "Test",
@@ -217,7 +219,7 @@ describe("setUserBadges", () => {
     });
     it("should handle existing ids", async () => {
         (getIsAdmin as jest.Mock).mockResolvedValue({ isAdmin: true });
-        await setUserBadges("token", [
+        await setUserBanners("token", [
             {
                 id: "5",
                 title: "Test",
@@ -238,7 +240,7 @@ describe("setUserBadges", () => {
     });
 });
 
-describe("checkBadges", () => {
+describe("checkBanners", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         resetFirebaseMocks();
@@ -246,7 +248,7 @@ describe("checkBadges", () => {
         mockDocData.mockReturnValue({
             stats: {
                 commentsCount: 10,
-                followersCount: 0,
+                followersCount: 25,
                 followingCount: 0,
                 likesGiven: 0,
                 likesReceived: 50,
@@ -261,14 +263,74 @@ describe("checkBadges", () => {
             data: mockDocData,
         });
     });
-    it("should returns error if stats not exists", async () => {
-        mockDocGet.mockResolvedValue({ exists: false, data: () => undefined });
-        await expect(checkBadges("unknown_id")).rejects.toThrow("Unauthorized");
+    it("should call 2 data calls if user data exists", async () => {
+        mockCollectionGet.mockResolvedValue({
+            empty: false,
+            docs: [
+                {
+                    data: () => ({ id: "testBanner1", condition: "posts>10" }),
+                },
+            ],
+        });
+        await checkBanners("id");
+        expect(mockDocData).toHaveBeenCalledTimes(2);
     });
-    it("should works if stats exists", async () => {
-        await expect(checkBadges("valid_id")).resolves.not.toThrow();
+    it("should call 1 data calls if user data not exists", async () => {
+        mockDocData.mockReturnValue(undefined);
+        mockCollectionGet.mockResolvedValue({
+            empty: false,
+            docs: [
+                {
+                    data: () => ({ id: "testBanner1", condition: "posts>10" }),
+                },
+            ],
+        });
+        await checkBanners("id");
+        expect(mockDocData).toHaveBeenCalledTimes(1);
     });
-    it("should awards count returns correct value", async () => {
-        await expect(checkBadges("valid_id")).resolves.toBe(5);
+});
+
+describe("setUserBanner", () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        resetFirebaseMocks();
+    });
+    it("should update user if exists and have banner", async () => {
+        (getIsAdmin as jest.Mock).mockResolvedValue({ uid: "testUser" });
+        mockDocGet.mockResolvedValue({
+            exists: true,
+        });
+        await setUserBanner("token", {
+            id: "test",
+            title: "Test",
+        } as any);
+        expect(mockDocUpdate).toHaveBeenCalled();
+    });
+    it("should update user if exists and have not banner", async () => {
+        (getIsAdmin as jest.Mock).mockResolvedValue({ uid: "testUser" });
+        mockDocGet.mockResolvedValue({
+            exists: true,
+        });
+        await setUserBanner("token", null);
+        expect(mockDocUpdate).toHaveBeenCalled();
+    });
+    it("should not update user if not exists and have not banner", async () => {
+        (getIsAdmin as jest.Mock).mockResolvedValue({ uid: "testUser" });
+        mockDocGet.mockResolvedValue({
+            exists: false,
+        });
+        await setUserBanner("token", null);
+        expect(mockDocUpdate).not.toHaveBeenCalled();
+    });
+    it("should not update user if not exists and have banner", async () => {
+        (getIsAdmin as jest.Mock).mockResolvedValue({ uid: "testUser" });
+        mockDocGet.mockResolvedValue({
+            exists: false,
+        });
+        await setUserBanner("token", {
+            id: "test",
+            title: "Test",
+        } as any);
+        expect(mockDocUpdate).not.toHaveBeenCalled();
     });
 });

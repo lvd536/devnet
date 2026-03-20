@@ -141,12 +141,11 @@ function checkCondition(
 }
 
 export async function checkBanners(userId: string) {
-    const [userSnap, userBannersSnap, banners] = await Promise.all([
+    const [userSnap, banners] = await Promise.all([
         await adminDb.doc(`users/${userId}`).get(),
-        await adminDb.collection(`users/${userId}/banners`).get(),
         await adminDb.collection("banners").get(),
     ]);
-    if (!userSnap.data() || userBannersSnap.empty || banners.empty) return;
+    if (!userSnap.data() || banners.empty) return;
     const user = userSnap.data() as IUserProfile;
 
     banners.docs.forEach(async (banner) => {
@@ -215,6 +214,10 @@ export async function setUserBanner(idToken: string, banner?: IBanner | null) {
         const { uid } = await getIsAdmin(idToken);
 
         const userRef = adminDb.doc(`users/${uid}`);
+
+        const userSnap = await userRef.get();
+        if (!userSnap.exists) throw new Error("User Not Found");
+
         await userRef.update({ banner });
     } catch (err) {
         console.error(err);

@@ -8,6 +8,8 @@ export interface IUserProfile {
     githubUsername: string | null;
     avatarUrl: string | null;
 
+    description?: string;
+
     xp: number;
     level: number;
 

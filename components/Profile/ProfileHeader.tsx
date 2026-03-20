@@ -33,6 +33,7 @@ export default function ProfileHeader() {
         roles,
         id,
         createdAt,
+        description,
     } = userProfile || profile;
 
     const date = (createdAt as Timestamp).toDate();
@@ -67,6 +68,7 @@ export default function ProfileHeader() {
                 roles={roles}
                 registerDate={date}
                 targetUserId={id || user.uid}
+                description={description}
             />
             <ProfileExpBar level={level} xp={xp} />
             <ProfileBadges userId={id} streak={stats.streakDays} />

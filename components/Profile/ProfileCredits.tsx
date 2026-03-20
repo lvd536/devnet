@@ -7,6 +7,7 @@ import ProfileRole from "./ProfileRole";
 interface IProps {
     githubUsername: string | null;
     username: string;
+    description?: string;
     targetUserId: string;
     followersCount: number;
     followingCount: number;
@@ -18,6 +19,7 @@ interface IProps {
 export default function ProfileCredits({
     githubUsername,
     username,
+    description,
     targetUserId,
     followersCount,
     followingCount,
@@ -38,6 +40,7 @@ export default function ProfileCredits({
                 <div className="w-1 h-1 bg-text-muted rounded-full" />
                 <ProfileRole role={role} roles={roles} />
             </div>
+            <p className="text-sm">{description}</p>
             <ProfileMeta
                 followersCount={followersCount}
                 followingCount={followingCount}

@@ -6,7 +6,7 @@ import { BookPlus, MessageSquareOff, BookMinus } from "lucide-react";
 import { useState } from "react";
 import { IProject } from "@/interfaces/interfaces";
 import Repository from "../Repository";
-import ProfileReposModal from "../Profile/ProfileReposModal";
+import ProfileReposModal from "../Modals/ProfileReposModal";
 import { auth } from "@/lib/firebase/firebase";
 import { sendPost } from "@/actions/posts";
 

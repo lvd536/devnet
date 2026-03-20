@@ -22,15 +22,21 @@ import { useCallback, useEffect, useState } from "react";
 
 export function ProfileEdit() {
     const { profile } = useUserProfileStore();
+    const entryUsername = profile?.username ?? "";
+
     const [displayName, setDisplayName] = useState<string>(
         profile?.githubUsername ?? "",
     );
 
-    const entryUsername = profile?.username ?? "";
     const [username, setUsername] = useState<string>(profile?.username ?? "");
     const [usernameExists, setUsernameExists] = useState<boolean>(
         !(profile?.username === entryUsername),
     );
+
+    const [description, setDescription] = useState<string | "">(
+        profile?.description ?? "",
+    );
+
     const [error, setError] = useState<string | null>(null);
 
     const handleEdit = () => {
@@ -46,7 +52,12 @@ export function ProfileEdit() {
                     type: "promise",
                     promise: {
                         func: () =>
-                            editUserCredits(token, username, displayName),
+                            editUserCredits(
+                                token,
+                                username,
+                                displayName,
+                                description,
+                            ),
                         errorMessage: "При изменении профиля произошла ошибка",
                         loadingMessage: "Применяем изменения",
                         successMessage:
@@ -129,6 +140,15 @@ export function ProfileEdit() {
                             name="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </Field>
+                    <Field>
+                        <Label htmlFor="description-1">Описание</Label>
+                        <Input
+                            id="description-1"
+                            name="description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
                         />
                     </Field>
                     <Field className="text-red-500 text-sm text-center">

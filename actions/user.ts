@@ -35,6 +35,7 @@ export async function editUserCredits(
     idToken: string,
     username: string,
     displayName: string,
+    description?: string,
 ) {
     const { uid } = await getIsAdmin(idToken);
     const userDoc = adminDb.doc(`users/${uid}`);
@@ -43,5 +44,6 @@ export async function editUserCredits(
     await userDoc.update({
         username,
         githubUsername: displayName,
+        description,
     });
 }

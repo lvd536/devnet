@@ -21,7 +21,6 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/firebase";
 import { getUserBase } from "@/consts/user";
-import { sendToast } from "@/utils/toast";
 
 export async function loginWithGithub(desiredUsername?: string) {
     const provider = new GithubAuthProvider();

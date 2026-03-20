@@ -19,14 +19,10 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 interface IProps {
-    onClose: () => void;
     setSelectedRepo: React.Dispatch<React.SetStateAction<IProject | null>>;
 }
 
-export default function ProfileReposModal({
-    onClose,
-    setSelectedRepo,
-}: IProps) {
+export default function ProfileReposModal({ setSelectedRepo }: IProps) {
     const [searchValue, setSearchValue] = useState<string>("");
     const { repositories } = useUserProfileStore();
 
@@ -63,10 +59,7 @@ export default function ProfileReposModal({
                             <Repository
                                 repo={repo}
                                 key={repo.repoId}
-                                onClick={() => {
-                                    setSelectedRepo(repo);
-                                    onClose();
-                                }}
+                                onClick={() => setSelectedRepo(repo)}
                             />
                         ))}
                     </ul>

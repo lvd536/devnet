@@ -2,7 +2,7 @@
 
 import { useUserProfileStore } from "@/stores/useProfileStore";
 import Image from "next/image";
-import { BookPlus, MessageSquareOff, BookMinus } from "lucide-react";
+import { MessageSquareOff, BookMinus } from "lucide-react";
 import { useState } from "react";
 import { IProject } from "@/interfaces/interfaces";
 import Repository from "../Repository";
@@ -11,7 +11,6 @@ import { auth } from "@/lib/firebase/firebase";
 import { sendPost } from "@/actions/posts";
 
 export default function PostCreation() {
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [selectedRepo, setSelectedRepo] = useState<IProject | null>(null);
     const [message, setMessage] = useState<string>("");
     const { profile } = useUserProfileStore();
@@ -64,7 +63,6 @@ export default function PostCreation() {
                     <div className="flex items-center justify-between mt-4">
                         <div className="flex gap-4 lg:gap-6">
                             <ProfileReposModal
-                                onClose={() => setIsModalOpen(false)}
                                 setSelectedRepo={setSelectedRepo}
                             />
                             <MessageSquareOff

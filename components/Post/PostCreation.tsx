@@ -63,11 +63,9 @@ export default function PostCreation() {
                     )}
                     <div className="flex items-center justify-between mt-4">
                         <div className="flex gap-4 lg:gap-6">
-                            <BookPlus
-                                width={20}
-                                height={20}
-                                className="hover:text-text text-text-secondary transition-text duration-300"
-                                onClick={() => setIsModalOpen(true)}
+                            <ProfileReposModal
+                                onClose={() => setIsModalOpen(false)}
+                                setSelectedRepo={setSelectedRepo}
                             />
                             <MessageSquareOff
                                 width={20}
@@ -92,11 +90,6 @@ export default function PostCreation() {
                     </div>
                 </div>
             </div>
-            <ProfileReposModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                setSelectedRepo={setSelectedRepo}
-            />
         </>
     );
 }

@@ -5,6 +5,7 @@ import { useUserProfileStore } from "@/stores/useProfileStore";
 import { handleSync } from "@/utils/firebaseFunctions";
 import { RefreshCcw, LogOut } from "lucide-react";
 import { ProfileEdit } from "../Modals/ProfileEdit";
+import { sendToast } from "@/utils/toast";
 
 export default function ProfileControls() {
     const { setProfile, setRepositories, setUser } = useUserProfileStore();
@@ -18,7 +19,18 @@ export default function ProfileControls() {
     };
 
     const handleSyncRepos = () => {
-        handleSync().then(() => window.location.reload());
+        sendToast({
+            title: "Сихнронизация с Git",
+            type: "promise",
+            promise: {
+                func: () => handleSync(),
+                loadingMessage: "Получаем новые репозитории с Git...",
+                successMessage: "Синхронизация с гит прошла успешно!",
+                errorMessage:
+                    "Произошла непредвиденная ошибка. Свяжитесь с разработчикомы",
+            },
+            position: "top-center",
+        });
     };
 
     return (

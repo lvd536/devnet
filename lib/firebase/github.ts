@@ -9,14 +9,19 @@ import {
     reauthenticateWithPopup,
 } from "firebase/auth";
 import {
+    collection,
     doc,
     getDoc,
+    getDocs,
+    query,
     runTransaction,
-    serverTimestamp,
     setDoc,
     updateDoc,
+    where,
 } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/firebase";
+import { getUserBase } from "@/consts/user";
+import { sendToast } from "@/utils/toast";
 
 export async function loginWithGithub(desiredUsername?: string) {
     const provider = new GithubAuthProvider();
@@ -71,33 +76,11 @@ export async function loginWithGithub(desiredUsername?: string) {
             const chosenUsername =
                 desiredUsername ?? githubLogin ?? user.displayName ?? user.uid;
 
-            const newUser = {
-                username: chosenUsername,
-                role: {
-                    id: "member",
-                    name: "Member",
-                    color: "green-500",
-                    permissions: [],
-                    priority: 0,
-                    createdAt: 0,
-                },
-                githubUsername: githubLogin ?? user.photoURL ?? null,
-                avatarUrl: user.photoURL ?? null,
-                xp: 0,
-                level: 0,
-                stats: {
-                    postsCount: 0,
-                    projectsCount: 0,
-                    likesReceived: 0,
-                    likesGiven: 0,
-                    commentsCount: 0,
-                    followersCount: 0,
-                    followingCount: 0,
-                    streakDays: 0,
-                    lastActiveDate: serverTimestamp(),
-                },
-                createdAt: serverTimestamp(),
-            };
+            const newUser = getUserBase(
+                chosenUsername,
+                user.photoURL ?? null,
+                githubLogin ?? user.photoURL ?? null,
+            );
 
             tx.set(userRef, newUser);
         });
@@ -107,22 +90,40 @@ export async function loginWithGithub(desiredUsername?: string) {
 
 async function fetchGithubRepos(
     accessToken: string,
-): Promise<IGitHubRepo[] | undefined> {
-    const res = await fetch(
-        "https://api.github.com/user/repos?per_page=50&sort=updated",
-        {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                Accept: "application/vnd.github+json",
-            },
-        },
-    );
+    existingRepoIds?: Set<number>,
+): Promise<IGitHubRepo[]> {
+    const allRepos: IGitHubRepo[] = [];
+    let page = 1;
 
-    if (!res.ok) {
-        throw new Error("Failed to fetch repos");
+    while (true) {
+        const res = await fetch(
+            `https://api.github.com/user/repos?per_page=50&sort=updated&page=${page}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    Accept: "application/vnd.github+json",
+                },
+            },
+        );
+
+        if (!res.ok) throw new Error("Failed to fetch repos");
+
+        const repos: IGitHubRepo[] = await res.json();
+        if (repos.length === 0) break;
+
+        if (existingRepoIds) {
+            const newOnPage = repos.filter((r) => !existingRepoIds.has(r.id));
+            allRepos.push(...newOnPage);
+            if (newOnPage.length === 0) break;
+        } else {
+            allRepos.push(...repos);
+            break;
+        }
+
+        page++;
     }
 
-    return await res.json();
+    return allRepos;
 }
 
 async function saveReposToFirestore(userId: string, repos: IGitHubRepo[]) {
@@ -156,19 +157,32 @@ export async function handleSync() {
             auth.currentUser!,
             provider,
         );
-
         const credential = GithubAuthProvider.credentialFromResult(result);
-
         const token = credential?.accessToken;
 
-        const userRef = doc(db, "users", auth.currentUser!.uid);
-        updateDoc(userRef, {
+        if (!token) throw new Error("No access token");
+
+        const uid = auth.currentUser!.uid;
+
+        const snap = await getDocs(
+            query(collection(db, "projects"), where("ownerId", "==", uid)),
+        );
+        const existingRepoIds = new Set<number>(
+            snap.docs.map((d) => d.data().repoId as number),
+        );
+
+        await updateDoc(doc(db, "users", uid), {
             avatarUrl: auth.currentUser!.photoURL ?? null,
         });
 
-        const repos = await fetchGithubRepos(token!);
-        if (repos) await saveReposToFirestore(auth.currentUser!.uid, repos);
+        const newRepos = await fetchGithubRepos(token, existingRepoIds);
+        if (newRepos.length > 0) {
+            await saveReposToFirestore(uid, newRepos);
+        }
+
+        return newRepos.length;
     } catch (err) {
         console.error(err);
+        return 0;
     }
 }

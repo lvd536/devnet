@@ -15,6 +15,12 @@ export default function ProfileControls() {
             setProfile(null);
             setUser(null);
             setRepositories(null);
+            sendToast({
+                title: "Выход",
+                description: "Вы успешно вышли с аккаунта",
+                type: "success",
+                position: "top-center",
+            });
         });
     };
 

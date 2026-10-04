@@ -40,6 +40,7 @@ export default function DetailedPost() {
                         githubUsername={user.githubUsername}
                         createdAt={post.createdAt}
                         userId={user.id}
+                        postId={postId}
                         role={user.role}
                     />
                 </div>

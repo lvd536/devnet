@@ -11,7 +11,7 @@ interface IProps {
     githubUsername: string | null;
     createdAt: FirestoreCreatedAt | string;
     userId: string;
-    postLink: string;
+    postId: string;
     role?: IRole;
 }
 
@@ -20,7 +20,7 @@ export default function PostCredits({
     githubUsername,
     createdAt,
     userId,
-    postLink,
+    postId,
     role,
 }: IProps) {
     const handleShare = () => {
@@ -30,11 +30,11 @@ export default function PostCredits({
             description: "Ссылка на пост успешно скопирована в буфер обмена",
             position: "top-center",
         } as const;
-        navigator.clipboard
-            .writeText(browserRoutes.url.link + postLink)
-            .then(() => {
-                sendToast(toast);
-            });
+        const baseUrl =
+            process.env.NEXT_PUBLIC_BASE_URL ?? browserRoutes.url.link;
+        navigator.clipboard.writeText(`${baseUrl}/post/${postId}`).then(() => {
+            sendToast(toast);
+        });
     };
     return (
         <div className="flex flex-1 min-w-0 gap-3 items-center justify-between">

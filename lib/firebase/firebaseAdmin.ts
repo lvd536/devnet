@@ -3,15 +3,16 @@ import admin from "firebase-admin";
 let app: admin.app.App;
 
 if (!admin.apps.length) {
-    const serviceAccountRaw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    const base64Key = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_BASE64;
 
-    if (!serviceAccountRaw) {
+    if (!base64Key) {
         throw new Error(
-            "Missing FIREBASE_SERVICE_ACCOUNT_KEY environment variable",
+            "Missing FIREBASE_SERVICE_ACCOUNT_KEY_BASE64 environment variable",
         );
     }
 
-    const serviceAccount = JSON.parse(serviceAccountRaw.replace(/\\n/g, "\n"));
+    const jsonString = Buffer.from(base64Key, "base64").toString("utf8");
+    const serviceAccount = JSON.parse(jsonString);
 
     app = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
